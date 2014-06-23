@@ -1,0 +1,18 @@
+.task-complete td, .task-inactive td {
+	color: #999;
+}
+
+.task-complete td {
+	
+	text-decoration: line-through;
+}
+
+#ui-datepicker-div, #ui-datepicker {
+	z-index: 9999;
+}
+
+form.gn-taskfilter .filters form th {
+	text-align: right;
+	vertical-align: middle;
+	padding: 2px;
+}

@@ -1,0 +1,97 @@
+label {
+	color: #5272b0;
+}
+
+form.gnlms_data_form label, 
+form.gnlms_data_form input[type='text'], 
+form.gnlms_data_form input[type='password'], 
+form.gnlms_data_form input[type='date'],
+form.gnlms_data_form input[type='number'],
+form.gnlms_data_form textarea {
+	display: block;
+}
+
+form.gnlms_data_form .gnlms_range  input, form.gnlms_data_form .gnlms_range  label {
+	display: inline;
+}
+
+form.gnlms_data_form p {
+	margin: 1em 0;
+	font-size: 12px;
+}
+
+form.gnlms_report_filter fieldset {
+    border: 2px groove threedface;
+    display: block;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+.gnlms_report_data {
+	padding: 1em;
+}
+
+.gnlms_report_data .answer.numeric {
+	text-align: center;
+	font-weight: bold;
+}
+
+.gnlms_report_data .answer.incorrect {
+	color: red;
+}
+
+.gnlms_report_data .answer.correct {
+	color: green;
+}
+
+form.gnlms_data_form label, .gnlms_range {
+	margin-bottom: 1em;
+}
+
+
+form.gnlms_data_form textarea {
+	width: 90%;
+	height: 200px;
+}
+
+
+form.gn-list-form label, form.gn-list-form input[type='text'] {
+	display: block;
+}
+
+div.error {
+	border: 2px solid red;
+	background-color: #fcc;
+}
+
+/* CTW addition */
+div.filters form.gn-list-form label, form.gn-list-form input[type='text'], div.filters div {
+	display: inline-block;
+	margin:3px;
+}
+
+div.filters {
+	background-color: #EEEE99;
+	}
+
+div.gnlist-filter-update {float:right}
+/* End CTW */
+
+form.gn-list-form label {
+	margin-bottom: 0.5em;
+}
+
+div.full_span {
+	clear: both;
+}
+
+div#gnlms-course-monitor p {margin-top:9px}
+div#gnlms-course-monitor a {text-decoration:underline; text-align: center; color: blue; font-weight:bold; display:block;}
+
+
+/*
+input {
+	border: 2px inset #ccc;
+}
+*/

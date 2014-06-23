@@ -1,0 +1,44 @@
+#ui-datepicker-div, #ui-datepicker, div.time-picker
+{
+ z-index: 9999;
+}
+
+div.time-picker-12hours {
+	width: 7em;
+}
+
+div.gn-calendar-widget form th {  /* CTW added context before form */
+	text-align: right;
+	vertical-align: middle;
+	padding: 2px;
+}
+
+#calendar-content {
+	text-align: center;
+}
+
+#calendar {
+	text-align: left;
+	width: 80%;
+	margin: auto;
+	font-family: sans-serif;
+}
+
+#calendar .gn-task, #calendar .gn-task * {
+	border-color: #f66;
+	background-color: #f99;
+
+}
+
+.gn-calendar-widget {
+	
+	/*font-size: 62.5%;*/
+}
+
+.gn-calendar-widget .ui-datepicker-title {
+	text-decoration: underline;
+	cursor: pointer;
+
+}
+
+.ui-datepicker-inline: {display: block !important;}
