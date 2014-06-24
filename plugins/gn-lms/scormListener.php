@@ -18,7 +18,7 @@ function loadData($uid, $cid) {
 	global $gnlms;
 
 
-	$sql ="select scormdata from gnlms_user_course_registration where course_id=$cid and user_id=$uid";
+	$sql ="select scormdata from ".$gnlms->data->tableName('user_course_registration')." where course_id=$cid and user_id=$uid";
 	$data = $wpdb->get_var($sql);
 	error_log($sql);
 	echo($data);
@@ -36,14 +36,14 @@ function checkCompletion ($uid, $cid, $data) {
 		return;
 	}
 
-	
+
 	if(isComplete($dataObj) && $gnlms->data->getUserCourseStatus ($uid, $cid) != "Completed") {
 		$gnlms->data->setCourseComplete($uid, $cid, getScore($dataObj));
 	}
 	else if (isFailed($dataObj) && $gnlms->data->getUserCourseStatus ($uid, $cid) != "Failed") {
 		$gnlms->data->setCourseFailed($uid, $cid, getScore($dataObj));
 	}
-		
+
 }
 
 
@@ -61,7 +61,7 @@ function storeEvaluationResult($uid, $cid, $data) {
 			$assessment["user_id"]=  $gnlms->data->quoteString($uid);
 			$assessment["course_id"]=  $gnlms->data->quoteString($cid);
 
-			$sql= "insert into gnlms_user_course_assessment_response(" .implode(",",array_keys($assessment)) .") values (" . implode(",",array_values($assessment)) .") ON DUPLICATE KEY UPDATE id=id";
+			$sql= "insert into ".$gnlms->data->tableName('user_course_assessment_response')."(" .implode(",",array_keys($assessment)) .") values (" . implode(",",array_values($assessment)) .") ON DUPLICATE KEY UPDATE id=id";
 
 			$gnlms->data->dbSafeExecute($sql);
 
@@ -84,13 +84,13 @@ function storeAssessmentResult($uid, $cid, $data) {
 			$assessment["user_id"]=  $gnlms->data->quoteString($uid);
 			$assessment["course_id"]=  $gnlms->data->quoteString($cid);
 
-			$sql= "insert into gnlms_user_course_assessment_response(" .implode(",",array_keys($assessment)) .") values (" . implode(",",array_values($assessment)) .") ON DUPLICATE KEY UPDATE id=id";
+			$sql= "insert into ".$gnlms->data->tableName('user_course_assessment_response')."(" .implode(",",array_keys($assessment)) .") values (" . implode(",",array_values($assessment)) .") ON DUPLICATE KEY UPDATE id=id";
 
 			$gnlms->data->dbSafeExecute($sql);
-			
-			
+
+
 		}
-	}	
+	}
 }
 
 function debugInteraction ($interaction) {
@@ -110,9 +110,9 @@ function debugInteraction ($interaction) {
 }
 
 function extractInteractionAssessmentData($assessmentData,$interaction) {
-		
+
 		global $gnlms;
-		
+
 		list($type, $name, $attempt, $n) = explode("_",$interaction->id);
 
 		$result = $interaction->result;
@@ -140,7 +140,7 @@ function extractInteractionAssessmentData($assessmentData,$interaction) {
 			else if ($n=="date") {
 				// DS: Changing this to standardize time zone
 				// $assessmentData->assessments[$name][$attempt]["response_date"] = $gnlms->data->quoteString($student_response);
-				
+
 				$assessmentData->assessments[$name][$attempt]["response_date"] = "from_unixtime(".time().")";
 
 			}
@@ -225,15 +225,15 @@ function getCourseStatus ($courseData) {
 
 function isComplete ($courseData) {
 	// $courseStatus = ($courseData->cmi &&  $courseData->cmi->core) ? $courseData->cmi->core->lesson_status : "";
-	
+
 	$courseStatus = getCourseStatus ($courseData);
-	
+
 	//error_log("Course status $courseStatus");
 
 	return $courseStatus == "completed" ? true : false;
 }
 
-function isFailed ($courseData) {	
+function isFailed ($courseData) {
 	$courseStatus = getCourseStatus ($courseData);
 	return $courseStatus == "failed" ? true : false;
 }
@@ -248,7 +248,7 @@ function saveData($uid,$cid, $data) {
 
 	$data = $gnlms->data->quoteString($data);
 
-	$sql = "update gnlms_user_course_registration set scormdata=$data where user_id=$uid and course_id=$cid";
+	$sql = "update ".$gnlms->data->tableName('user_course_registration')." set scormdata=$data where user_id=$uid and course_id=$cid";
 
 	error_log($sql);
 

@@ -76,10 +76,6 @@ class gnlms_LMS {
 
 
 	}
-	
-	function getSiteURL ($path="/") {
-		return get_site_url(get_current_blog_id(), $path);
-	}
 
 	function createNonce () {
 		$this->nonce = wp_create_nonce("gnlms");
@@ -144,9 +140,6 @@ class gnlms_LMS {
 				"user_email"=>$_POST['email'],
 				"role"=>"lms_user"
 			);
-			
-			$_POST['role'] = "lms_user";
-			
 			$result = wp_insert_user($userData);
 
 			if(is_wp_error( $result )) {
@@ -617,13 +610,13 @@ class gnlms_LMS {
 function getCourseURL ($cid) {
 		// $sql ="select url from gnlms_course where id=$cid";
 
-		$sql = $this->data->db->prepare("select url from gnlms_course where id=%d", $cid);
+		$sql = $this->data->db->prepare("select url from ".$this->data->tableName('course')." where id=%d", $cid);
 		return ($this->data->db->get_var($sql));
 }
 	function retrieveRegistration($uid, $cid) {
 		// $sql ="select record_status from gnlms_user_course_registration where user_id=$uid and course_id=$cid";
 
-		$sql ="select record_status, expiration_date from gnlms_user_course_registration where user_id=%d and course_id=%d";
+		$sql ="select record_status, expiration_date from ".$this->data->tableName('user_course_registration')." where user_id=%d and course_id=%d";
 		$sql = $this->data->db->prepare($sql, $uid, $cid);
 		//return ($this->data->db->get_var($sql));
 
@@ -869,23 +862,21 @@ function getCourseURL ($cid) {
 	}
 
 function registrationDbInsertFields($user_id) {
-		if(trim($_POST['role'])=='lms_user') {
-			error_log("Doing DB Update");
+		error_log("Doing DB Update");
 
-			$this->addLMSUser($user_id);
+		$this->addLMSUser($user_id);
 
-			// Auto-register for courses
+		// Auto-register for courses
 
-			$this->assignUserCourses($user_id);
+		$this->assignUserCourses($user_id);
 
-			$_POST["id"] = $user_id;
-			$_POST["gnlms_data_form"] = "user";
+		$_POST["id"] = $user_id;
+		$_POST["gnlms_data_form"] = "user";
 
-			$doRedirect = trim($_POST['_redirect']) ? true : false;
+		$doRedirect = trim($_POST['_redirect']) ? true : false;
 
-			$this->defaultUpdateEdit ("user", $doRedirect);
-			error_log("Finished DB Update");
-		}
+		$this->defaultUpdateEdit ("user", $doRedirect);
+		error_log("Finished DB Update");
 
 	}
 
