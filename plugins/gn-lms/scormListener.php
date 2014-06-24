@@ -21,7 +21,7 @@ function loadData($uid, $cid) {
 	$sql ="select scormdata from ".$gnlms->data->tableName('user_course_registration')." where course_id=$cid and user_id=$uid";
 	$data = $wpdb->get_var($sql);
 	error_log($sql);
-	echo($data);
+	echo strlen(trim($data)) ?  $data : "{}";
 
 }
 
