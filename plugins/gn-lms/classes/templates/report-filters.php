@@ -1,7 +1,7 @@
 <form class="gnlms_report_filter gnlms_data_form" method="GET">
 <fieldset>
 <legend>Filters</legend>
-
+<input type="hidden" name="reportname" value="<?php echo $report; ?>"/>
 <?php if($report=='user-registration'): ?>
 
 	<div class="gnlms_range"><label>Registration date between <input type="date" name="start_date" value="{start_date}" /></label> <label>and <input type="date" name="end_date" value="{end_date}"/></label></div>
@@ -18,7 +18,7 @@
 	<label><input type="text" name="regcode" value="{regcode}"/>Registration Code</label>
 	<label>
 		<select name="sort">
-			<?php $this->writeOrderByOptions("user-registration"); ?>	
+			<?php $this->writeOrderByOptions("user-registration"); ?>
 		</select>
 		<br/>Order by
 	</label>
@@ -49,11 +49,11 @@
 	</label>
 	<label>
 		<select name="sort">
-			<?php $this->writeOrderByOptions("user-activity"); ?>	
+			<?php $this->writeOrderByOptions("user-activity"); ?>
 		</select>
 		<br/>Order by
 	</label>
-	
+
 <?php elseif($report=="assessment-responses"): ?>
 	<div class="gnlms_range"><label>Date between <input type="date" name="start_date" value="{start_date}" /></label> <label>and <input type="date" name="end_date" value="{end_date}"/></label></div>
 	<label><input type="text" name="email" value="{email}" />Email contains</label>
@@ -67,10 +67,10 @@
 	</label>
 	<label>
 		<select name="sort">
-			<?php $this->writeOrderByOptions($report); ?>	
+			<?php $this->writeOrderByOptions($report); ?>
 		</select>
 		<br/>Order by
-	</label>	
+	</label>
 <?php elseif($report=="assessment-summary"): ?>
 	<div class="gnlms_range"><label>Date between <input type="date" name="start_date" value="{start_date}" /></label> <label>and <input type="date" name="end_date" value="{end_date}"/></label></div>
 	<label>
@@ -81,7 +81,7 @@
 		</select>
 		<br/>Course
 	</label>
-	
+
 <?php elseif($report=="course-completion"): ?>
 	<div class="gnlms_range"><label>Date between <input type="date" name="start_date" value="{start_date}" /></label> <label>and <input type="date" name="end_date" value="{end_date}"/></label></div>
 	<label><input type="text" name="email" value="{email}" />Email contains</label>
@@ -103,10 +103,10 @@
 			<?php endforeach; ?>
 		</select>
 		<br/>Course
-	</label>			
+	</label>
 	<label>
 		<select name="sort">
-			<?php $this->writeOrderByOptions("course-completion"); ?>	
+			<?php $this->writeOrderByOptions("course-completion"); ?>
 		</select>
 		<br/>Order by
 	</label>
