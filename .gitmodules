@@ -1,3 +1,9 @@
 [submodule "plugins/gnaritas_wordpress_library"]
 	path = plugins/gnaritas_wordpress_library
 	url = https://github.com/GnaritasInc/gnwpl.git
+[submodule "plugins/gn-calendar"]
+	path = plugins/gn-calendar
+	url = https://github.com/GnaritasInc/gn-calendar.git
+[submodule "plugins/gn-taskmanager"]
+	path = plugins/gn-taskmanager
+	url = https://github.com/GnaritasInc/gn-taskmanager.git
