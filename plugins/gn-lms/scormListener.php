@@ -245,6 +245,8 @@ function saveData($uid,$cid, $data) {
 	checkCompletion($uid, $cid, $data);
 	storeAssessmentResult($uid, $cid, $data);
 	storeEvaluationResult($uid, $cid, $data);
+	
+	$gnlms->scormLog("Saving data for user $uid, course $cid: $data");
 
 	$data = $gnlms->data->quoteString($data);
 

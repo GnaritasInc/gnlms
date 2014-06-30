@@ -715,13 +715,30 @@ function getCourseURL ($cid) {
 			echo(" $attribute='$attribute'");
 		}
 	}
+	
+	function writeLogMessage ($msg, $logPrefix) {
+		$now = time();
+		$logfile = dirname(__FILE__)."/log/{$logPrefix}_".date('Ymd', $now);
+		$timestamp = date('Y-m-d H:i:s T', $now);
+
+		error_log("[$timestamp] $msg\n", 3, $logfile);
+		
+	}
+	
+	function scormLog ($msg) {
+		$this->writeLogMessage($msg, "scorm");
+	}
 
 	function alertLog ($msg) {
+		/*
 		$now = time();
 		$logfile = dirname(__FILE__)."/log/alerts_".date('Ymd', $now);
 		$timestamp = date('Y-m-d H:i:s T', $now);
 
 		error_log("[$timestamp] $msg\n", 3, $logfile);
+		*/
+		
+		$this->writeLogMessage($msg, "alerts");
 	}
 
 	function doAdminAlerts () {
