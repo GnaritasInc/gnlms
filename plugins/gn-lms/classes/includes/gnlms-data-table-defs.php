@@ -199,4 +199,3 @@ $this->tableDefinitions = array (
 		) ENGINE=InnoDB"
 );
 ?>
-
