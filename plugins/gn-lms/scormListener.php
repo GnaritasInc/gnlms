@@ -1,4 +1,5 @@
 <?php
+ob_start();
 define ('LOC', str_replace("\\","/",dirname( __FILE__)));
 define('WP_ROOT',substr(LOC,0,strpos(LOC,"wp-content")));
 
@@ -8,6 +9,7 @@ require_once("classes/gnlms_LMS.php");
 require_once("classes/gnlms_Data.php");
 //require_once("classes/gnlms_ListWidget.php");
 
+ob_end_clean();
 
 $gnlms = new gnlms_LMS();
 
