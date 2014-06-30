@@ -1,0 +1,3 @@
+[submodule "plugins/gnaritas_wordpress_library"]
+	path = plugins/gnaritas_wordpress_library
+	url = https://github.com/GnaritasInc/gnwpl.git
