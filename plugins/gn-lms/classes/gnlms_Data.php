@@ -198,6 +198,10 @@ class gnlms_Data extends gn_PluginDB {
 
 
 	}
+	
+	function tableName ($internalName) {
+		return $this->prefixTableName($internalName);
+	}
 
 	function initTableDefinitions () {
 		require_once("includes/gnlms-data-table-defs.php");
