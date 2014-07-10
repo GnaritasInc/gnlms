@@ -14,6 +14,10 @@
 <?php endforeach; ?>
 </select>
 </label>
-
+<label>SCORM Data<br/>
+<textarea name="scormdata">
+<?php echo htmlspecialchars($context['scormdata']); ?>
+</textarea>
+</label>
 
 </form>

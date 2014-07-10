@@ -18,4 +18,4 @@
 <p>No courses.</p>
 <?php endif; ?>
 
-<div id="gnlms-edit-course-registration" data-height="360" class="gnlms-form-dialog" title="Edit Course Registration"> </div>
+<div id="gnlms-edit-course-registration" data-width="690" data-height="590" class="gnlms-form-dialog" title="Edit Course Registration"> </div>
