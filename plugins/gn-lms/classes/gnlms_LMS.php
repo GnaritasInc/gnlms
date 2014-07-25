@@ -1,7 +1,7 @@
 <?php
 
 
-class gnlms_LMS {
+class gnlms_LMS extends gn_WebInterface {
 
 
 	function __construct () {
@@ -29,12 +29,16 @@ class gnlms_LMS {
 			"MIME-Version: 1.0",
 			"Content-Type: text/html; charset=utf-8"
 		);
+		
+		$this->enableSessions();
 
 		add_shortcode("gnlms_data_form", array(&$this, "gnlms_data_form"));
 		add_shortcode("gnlms_data_support_form", array(&$this, "gnlms_data_support_form"));
 		add_shortcode("gnlms_launch_course", array(&$this, "gnlms_launch_course"));
 
-
+		
+		
+		
 		add_action("init", array(&$this, "controller"));
 		add_action("init", array(&$this, "createNonce"));
 
@@ -75,6 +79,28 @@ class gnlms_LMS {
 
 
 
+	}
+	
+	function enableSessions () {
+		add_action('init', array(&$this, "initSession"), 1);
+		add_action('wp_logout', array(&$this, "destroySession"));
+		add_action('wp_login', array(&$this, "destroySession"));
+		add_filter('wp_redirect', array(&$this, "beforeRedirect"), 20, 2);
+		
+	}
+	
+	function beforeRedirect ($location, $status) {
+		session_write_close();
+		return $location;
+	}
+	
+	function initSession () {		
+		session_start(); 		
+  		$this->setSessionValue("_gnlms_session_started", true);
+	}
+	
+	function destroySession () {
+		session_destroy();
 	}
 
 	function createNonce () {
