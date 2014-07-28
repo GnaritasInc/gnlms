@@ -50,6 +50,7 @@ function super ($methodName) {
 
 		add_shortcode('gnlms_admin_course_list', array(&$this, 'doAdminCourseList'));
 		add_shortcode('gnlms_user_current_courses', array(&$this, 'doUserCurrentCourseList'));
+		add_shortcode('gnlms_user_available_courses', array(&$this, 'doUserAvailableCourseList'));
 
 		add_shortcode('gnlms_admin_announcements', array(&$this, 'listAnnouncements'));
 		add_shortcode('gnlms_user_announcements', array(&$this, 'listAnnouncements'));
@@ -78,6 +79,13 @@ function super ($methodName) {
 	function doUserCurrentCourseList ($atts, $content, $code) {
 		$atts["key"] = "user_current_courses";
 		$atts["context_filter"]="context_user_id";
+		return $this->gn_short_list($atts, $content, $code);
+	}
+	
+	function doUserAvailableCourseList ($atts, $content, $code) {
+		$atts["key"] = "user_available_courses";
+		$atts["context_filter"]="context_user_id";
+		$atts["defaultsort"]="c.title";
 		return $this->gn_short_list($atts, $content, $code);
 	}
 
@@ -296,6 +304,10 @@ function super ($methodName) {
 			case "user_current_courses":
 				$output = $this->outputTreeViewList($atts, "user-current-courses.php");
 				break;
+			case "user_available_courses":
+				$output = $this->doCustomList("user-available-courses", $atts);
+				break;
+			
 			case "announcement":
 				$output = $this->doAnnouncementsList($atts);
 				break;

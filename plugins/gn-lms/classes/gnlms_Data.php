@@ -165,6 +165,14 @@ class gnlms_Data extends gn_PluginDB {
 					"context_user_id"=>"ucr.user_id=#current_user_id#"
 				)
 			),
+			
+			"user_available_courses"=>array(
+				"list_select_table"=>"#course# c",
+				"listcolumns"=>array("c.*"),
+				"context_filters"=>array(
+					"context_user_id"=>"c.id not in (select course_id from ".$this->prefixTableName('user_course_registration')." where user_id=#current_user_id#)"
+				)
+			),
 
 			"course_users"=>array(
 				"list_select_table"=>"#user# u inner join #user_course_registration# ucr on u.id=ucr.user_id left join #organization# o on o.id=u.organization_id",
