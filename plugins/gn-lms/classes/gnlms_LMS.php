@@ -95,12 +95,16 @@ class gnlms_LMS extends gn_WebInterface {
 	}
 	
 	function initSession () {		
+		error_log("Starting PHP session");
 		session_start(); 		
   		$this->setSessionValue("_gnlms_session_started", true);
 	}
 	
 	function destroySession () {
-		session_destroy();
+		if (session_id()) {
+			error_log("Destroying PHP session");
+			session_destroy();
+		}
 	}
 
 	function createNonce () {

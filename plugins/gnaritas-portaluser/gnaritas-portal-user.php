@@ -158,9 +158,7 @@ function gn_current_user_completed_courses () {
 	
 	$sql = "select * from #user_course_registration# ucr left join #course# c on ucr.course_id = c.id where user_id=$uid and course_status='Completed' order by course_completion_date desc";
 	$sql = $gnlms->data->replaceTableRefs($sql);
-	
-	error_log("User completed courses sql: $sql");
-	
+		
 	$records = $wpdb->get_results($sql);
 
 	return ($records);
