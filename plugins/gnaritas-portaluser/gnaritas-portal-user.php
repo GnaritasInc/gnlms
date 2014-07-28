@@ -151,9 +151,16 @@ function gn_completed_courses() {
 
 function gn_current_user_completed_courses () {
 	global $wpdb;
+	global $gnlms;
+	
 	$uid = get_current_user_id();
-	$sql = "select * from gnlms_user_course_registration ucr left join gnlms_course c on ucr.course_id = c.id where user_id=$uid and course_status='Completed' order by course_completion_date desc";
-
+	// $sql = "select * from gnlms_user_course_registration ucr left join gnlms_course c on ucr.course_id = c.id where user_id=$uid and course_status='Completed' order by course_completion_date desc";
+	
+	$sql = "select * from #user_course_registration# ucr left join #course# c on ucr.course_id = c.id where user_id=$uid and course_status='Completed' order by course_completion_date desc";
+	$sql = $gnlms->data->replaceTableRefs($sql);
+	
+	error_log("User completed courses sql: $sql");
+	
 	$records = $wpdb->get_results($sql);
 
 	return ($records);
