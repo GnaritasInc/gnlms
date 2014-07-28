@@ -156,8 +156,11 @@ class gnlms_Data extends gn_PluginDB {
 			),
 
 			"user_current_courses"=>array(
-				"list_select_table"=>"#course# c inner join #user_course_registration# ucr on c.id=ucr.course_id and ucr.course_completion_date is null and (ucr.expiration_date > current_date() or ucr.expiration_date is null)",
-				"listcolumns"=>array("c.id", "c.title", "c.description", "c.course_number", "ucr.course_status", "c.url"),
+				// DS: Modifying to include expired courses
+				// "list_select_table"=>"#course# c inner join #user_course_registration# ucr on c.id=ucr.course_id and ucr.course_completion_date is null and (ucr.expiration_date > current_date() or ucr.expiration_date is null)",
+				
+				"list_select_table"=>"#course# c inner join #user_course_registration# ucr on c.id=ucr.course_id and ucr.course_status != 'Completed' and ucr.course_status != 'Failed' and ucr.record_status=1",
+				"listcolumns"=>array("c.id", "c.title", "c.description", "c.course_number", "ucr.course_status", "c.url", "if(ucr.expiration_date < current_date(), 1, 0) as 'expired'"),
 				"context_filters"=>array(
 					"context_user_id"=>"ucr.user_id=#current_user_id#"
 				)
