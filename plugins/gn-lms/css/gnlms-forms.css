@@ -20,6 +20,10 @@ form.gnlms_data_form p {
 	font-size: 12px;
 }
 
+.gnlms-shopping-cart form.shopping_cart_update {
+	display: inline;
+}
+
 form.gnlms_report_filter fieldset {
     border: 2px groove threedface;
     display: block;

@@ -3,6 +3,7 @@
 	$isSelected = in_array($context['id'], $this->getSelectedCourses());
 	$action = $isSelected ? "gnlms_shopping_cart_remove" : "gnlms_shopping_cart_add";
 	$actionText = $isSelected ? "Remove from Shopping Cart" : "Add to Shopping Cart";
+	$id = $context['id'];
 ?>
 
 <h2><?php echo $atts['title']; ?></h2>
@@ -11,12 +12,7 @@
 <h3><?php echo htmlspecialchars($context['title']); ?></h3>
 <p><?php echo htmlspecialchars(trim($context['description'])); ?></p>
 
-<form method="POST" class="gnlms_data_form">
-	<input type="hidden" name="gnlms_data_form" value="shopping_cart_update"/>
-	<input type="hidden" name="course_id" value="<?php echo($context['id']); ?>" />
-	<input type="hidden" name="action" value="<?php echo $action; ?>" />
-	<input type="submit" value="<?php echo $actionText; ?>" />
-</form>
+<?php include("_shopping_cart_update.php"); ?>
 
 </div>
 
