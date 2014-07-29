@@ -59,6 +59,8 @@ function super ($methodName) {
 		add_shortcode('gnlms_subscription_code_courses', array(&$this, 'listSubscriptionCodeCourses'));
 		add_shortcode('gnlms_organization_courses', array(&$this, 'listOrganizationCourses'));
 		
+		add_shortcode('gnlms_shopping_cart', array(&$this, 'doShoppingCart'));
+		
 		add_shortcode('gnlms_button', array(&$this, 'getButtonHTML'));
 
 	}
@@ -176,6 +178,11 @@ function super ($methodName) {
 	function listRecentActivity ($atts, $content, $code) {
 		$atts["key"]="admin_recent_activity";
 		$atts["defaultsort"] = "uce.event_date desc";
+		return $this->gn_full_list($atts, $content, $code);
+	}
+	
+	function doShoppingCart ($atts, $content, $code) {
+		$atts["key"]="shopping_cart";
 		return $this->gn_full_list($atts, $content, $code);
 	}
 
@@ -297,6 +304,7 @@ function super ($methodName) {
 
 	function generateDataTable ($atts, $inputRecords=false) {
 		$output = "";
+		global $gnlms;
 		switch($atts["key"]) {
 			case "admin_course_list":
 				$output = $this->outputTreeViewList($atts, "admin-course-list.php");
@@ -320,6 +328,9 @@ function super ($methodName) {
 			case "admin_user_current_courses":
 				$output = $this->doCustomList("admin-user-courses", $atts);
 				break;
+			case "shopping_cart":
+				$output = $this->doCustomList("shopping-cart", $atts, $this->data->fetchCourses($gnlms->getSelectedCourses()));
+				break;
 			default:
 				$output = parent::generateDataTable($atts, $inputRecords);
 				break;
@@ -328,10 +339,15 @@ function super ($methodName) {
 		return $output;
 	}
 
-	function doCustomList ($template, $atts) {
-		$sql = $this->generateSQL($atts);
-		$countSQL = $this->generateCountSQL($atts);
-		$records = $this->retrieveData($sql, $countSQL, $atts);
+	function doCustomList ($template, $atts, $inputRecords=array()) {
+		if ($inputRecords) {
+			$records = $inputRecords;
+		}
+		else {
+			$sql = $this->generateSQL($atts);
+			$countSQL = $this->generateCountSQL($atts);
+			$records = $this->retrieveData($sql, $countSQL, $atts);
+		}
 
 		ob_start();
 		include(dirname(__FILE__)."/templates/$template.php");

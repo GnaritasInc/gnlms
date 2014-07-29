@@ -258,6 +258,15 @@ class gnlms_Data extends gn_PluginDB {
 		$sql = $this->db->prepare($this->replaceTableRefs("select * from #course# where id=%d"), $courseID);
 		return $this->db->get_row($sql);
 	}
+	
+	function fetchCourses ($courseIDs) {
+		if(count($courseIDs)) {
+			$sql = $this->db->prepare($this->replaceTableRefs("select * from #course# where id in(". implode(', ', array_fill(0, count($courseIDs), '%d')) .")"), $courseIDs);
+			return $this->db->get_results($sql);
+		}
+		else return array();
+		
+	}
 
 	function getCurrentCourse () {
 
