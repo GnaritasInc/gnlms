@@ -1,10 +1,24 @@
-<?php if($atts['code']=="gnlms_course_detail"): ?>
+<?php if($atts['code']=="gnlms_course_detail"): 
+	
+	$isSelected = in_array($context['id'], $this->getSelectedCourses());
+	$action = $isSelected ? "gnlms_shopping_cart_remove" : "gnlms_shopping_cart_add";
+	$actionText = $isSelected ? "Remove from Shopping Cart" : "Add to Shopping Cart";
+?>
 
 <h2><?php echo $atts['title']; ?></h2>
 <div class="gnlms-course-detail full_span">
+<?php if($msg=trim($_GET['msg'])): ?><p class="gnlms-msg"><?php echo htmlspecialchars($msg); ?></p><?php endif; ?>
 <h3><?php echo htmlspecialchars($context['title']); ?></h3>
 <p><?php echo htmlspecialchars(trim($context['description'])); ?></p>
-</p>
+
+<form method="POST" class="gnlms_data_form">
+	<input type="hidden" name="gnlms_data_form" value="shopping_cart_update"/>
+	<input type="hidden" name="course_id" value="<?php echo($context['id']); ?>" />
+	<input type="hidden" name="action" value="<?php echo $action; ?>" />
+	<input type="submit" value="<?php echo $actionText; ?>" />
+</form>
+
+</div>
 
 <?php else: ?>
 

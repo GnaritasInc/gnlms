@@ -40,7 +40,7 @@ class gnlms_LMS extends gn_WebInterface {
 		
 		
 		
-		add_action("init", array(&$this, "controller"));
+		add_action("init", array(&$this, "controller"), 2);
 		add_action("init", array(&$this, "createNonce"));
 
 		add_action('wp_enqueue_scripts', array(&$this, 'register_scripts'));
@@ -96,16 +96,34 @@ class gnlms_LMS extends gn_WebInterface {
 	}
 	
 	function initSession () {		
-		error_log("Starting PHP session");
 		session_start(); 		
   		$this->setSessionValue("_gnlms_session_started", true);
 	}
 	
 	function destroySession () {
 		if (session_id()) {
-			error_log("Destroying PHP session");
 			session_destroy();
 		}
+	}
+	
+	function getSelectedCourses () {
+		$selectedCourses = (array_key_exists("selectedCourses", $_SESSION)) ? $this->getSessionValue("selectedCourses") : array();
+		return $selectedCourses;
+	}
+	
+	
+	function addSelectedCourse ($courseID) {
+		$selectedCourses = $this->getSelectedCourses();
+		$selectedCourses[] = $courseID;
+		
+		$this->setSessionValue("selectedCourses", $selectedCourses);
+	}
+	
+	function removeSelectedCourse ($courseID) {
+		$selectedCourses = array_diff($this->getSelectedCourses(), array($courseID));
+		
+		$this->setSessionValue("selectedCourses", $selectedCourses);
+		
 	}
 
 	function createNonce () {
@@ -243,7 +261,7 @@ class gnlms_LMS extends gn_WebInterface {
 
 
 	function handleFormSubmission ($name) {
-		if(!$this->verifyUser()) {
+		if(!$this->verifyUser($name)) {
 			die("Unauthorized");
 			return;
 		}
@@ -258,12 +276,43 @@ class gnlms_LMS extends gn_WebInterface {
 			case "alert_preferences":
 				$this->updateAlertPreferences();
 				break;
+			case "shopping_cart_update":
+				$this->updateShoppingCart();
+				break;
 
 			default:
 				$this->defaultUpdateEdit($name);
 		}
 
 
+	}
+	
+	function updateShoppingCart () {
+		$action = trim($_POST['action']);
+		$courseID = intval(trim($_POST['course_id']));
+		
+		if (!$courseID) {
+			$msg = "Error: Course not specified.";
+		}
+		else if ($action == "gnlms_shopping_cart_add") {
+			$this->addSelectedCourse($courseID);
+			$msg="Course added.";
+			
+		}
+		else if ($action == "gnlms_shopping_cart_remove") {
+			$this->removeSelectedCourse($courseID);
+			$msg="Course removed.";
+		}
+		else {
+			$msg = "Error: Unknown action.";
+		}
+		
+		$redirectURL = $_SERVER['PATH_INFO'] . '?' . http_build_query(array_merge($_GET, array("msg"=>$msg)));
+		
+		wp_safe_redirect($redirectURL);
+		exit();
+		
+		
 	}
 
 	function filterFormData ($data) {
@@ -282,9 +331,25 @@ class gnlms_LMS extends gn_WebInterface {
 
 		return $data;
 	}
+	
+	function getRolesForAction ($action) {
+		$defaults = array("administrator", "lms_admin");
+		$roles = array(
+			"shopping_cart_update"=>array("lms_user")
+		);
+		
+		return array_key_exists($action, $roles) ? array_merge($defaults, $roles[$action]) : $defaults;
+	}
 
-	function verifyUser () {
-		return ($this->user_in_role("administrator") || $this->user_in_role("lms_admin"));
+	function verifyUser ($action="") {
+		$roles = $this->getRolesForAction($action);
+		foreach ($roles as $role) {
+			if ($this->user_in_role($role)) {
+				return true;
+			}
+		}	
+		
+		return false;
 	}
 
 	function ajaxSuccess () {
