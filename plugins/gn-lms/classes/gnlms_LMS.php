@@ -35,6 +35,7 @@ class gnlms_LMS extends gn_WebInterface {
 		add_shortcode("gnlms_data_form", array(&$this, "gnlms_data_form"));
 		add_shortcode("gnlms_data_support_form", array(&$this, "gnlms_data_support_form"));
 		add_shortcode("gnlms_launch_course", array(&$this, "gnlms_launch_course"));
+		add_shortcode("gnlms_course_detail", array(&$this, "gnlms_course_detail"));
 
 		
 		
@@ -604,9 +605,16 @@ class gnlms_LMS extends gn_WebInterface {
 
 
 		ob_start();
-		$this->displayTemplate($formFile, $contextRecord);
+		$this->displayTemplate($formFile, $contextRecord, $atts);
 		return ob_get_clean();
 
+	}
+	
+	function gnlms_course_detail ($atts) {
+		$atts["name"] = "course";
+		$atts["code"] = "gnlms_course_detail";
+		
+		return $this->gnlms_data_form($atts);
 	}
 
 	function getClientScript($uid,$cid,$scormInterfaceURL, $courseURL) {
@@ -729,7 +737,7 @@ function getCourseURL ($cid) {
 	}
 
 
-	function displayTemplate ($templateFile, $context=array()) {
+	function displayTemplate ($templateFile, $context=array(), $atts=array()) {
 		if(!file_exists(dirname(__FILE__)."/$templateFile")) {
 			echo( "Error: $templateFile not found.");
 		}

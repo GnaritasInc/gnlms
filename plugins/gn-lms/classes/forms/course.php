@@ -1,6 +1,16 @@
+<?php if($atts['code']=="gnlms_course_detail"): ?>
+
+<h2><?php echo $atts['title']; ?></h2>
+<div class="gnlms-course-detail full_span">
+<h3><?php echo htmlspecialchars($context['title']); ?></h3>
+<p><?php echo htmlspecialchars(trim($context['description'])); ?></p>
+</p>
+
+<?php else: ?>
+
 <form method="POST" class="gnlms_data_form">
 	<input type="hidden" name="gnlms_data_form" value="course"/>
-	<input type="hidden" name="_redirect" value="<?php echo $this->getSiteURL(); ?>" />
+	<input type="hidden" name="_redirect" value="/" />
 	<?php if($context['id']): ?>  
 		<input type="hidden" name="id" value="<?php echo($context['id']); ?>" />
 	<?php endif; ?>
@@ -14,3 +24,5 @@
 	<label>Version/Update <input type="date" name="last_update" value="<?php echo(htmlspecialchars($context['last_update'])); ?>"/></label>
 	<input type="submit" value="<?php echo $context['id'] ? "Update" : "Add" ?> Course"/>
 </form>
+
+<?php endif; ?>
