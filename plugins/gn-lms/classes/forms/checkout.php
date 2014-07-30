@@ -14,13 +14,8 @@
 <?php endforeach; ?>
 <tr><th>Total:</th><th><?php echo "$".number_format($totalCost, 2); ?></th><th>&nbsp;</th></tr>
 </table>
-<form method="POST" class="gnlms_data_form">
-<input type="hidden" name="gnlms_data_form" value="checkout"/>
-<?php foreach($selectedCourses as $course): ?>
-	<input type="hidden" name="course_id[]" value="<?php echo $course->id; ?>"/>
-<?php endforeach; ?>
-<input type="submit" value="Register"/>
-</form>
+
+<?php include($formFile); ?>
 
 <?php else: ?>
 <p>Your shopping cart is empty.</p>

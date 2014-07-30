@@ -686,11 +686,11 @@ class gnlms_LMS extends gn_WebInterface {
 	function gnlms_checkout ($atts) {
 		
 		$atts = shortcode_atts(array("title"=>"Checkout"), $atts, "gnlms_checkout");		
-		$formFile = apply_filters("gnlms_checkout_template", dirname(__FILE__)."/forms/checkout.php");				
+		$formFile = apply_filters("gnlms_checkout_form", dirname(__FILE__)."/forms/_checkout_default.php");				
 		$selectedCourses = $this->data->fetchCourses($this->getSelectedCourses());
 		$userID = get_current_user_id();
 		ob_start();
-		include($formFile);
+		include(dirname(__FILE__)."/forms/checkout.php");
 		return ob_get_clean();
 	}
 	
