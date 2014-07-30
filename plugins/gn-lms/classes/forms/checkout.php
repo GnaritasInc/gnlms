@@ -14,7 +14,9 @@
 <?php endforeach; ?>
 <tr><th>Total:</th><th><?php echo "$".number_format($totalCost, 2); ?></th><th>&nbsp;</th></tr>
 </table>
-
+<?php if(strlen(trim($_GET['err']))): ?>
+	<p class="gnlms-msg gnlms-err">Error: <?php echo htmlspecialchars($_GET['err']); ?></p>
+<?php endif; ?>
 <?php include($formFile); ?>
 
 <?php else: ?>

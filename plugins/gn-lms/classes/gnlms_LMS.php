@@ -37,6 +37,7 @@ class gnlms_LMS extends gn_WebInterface {
 		add_shortcode("gnlms_launch_course", array(&$this, "gnlms_launch_course"));
 		add_shortcode("gnlms_course_detail", array(&$this, "gnlms_course_detail"));
 		add_shortcode("gnlms_checkout", array(&$this, "gnlms_checkout"));
+		add_shortcode("gnlms_checkout_confirm", array(&$this, "gnlms_checkout_confirm"));
 
 		
 		
@@ -125,6 +126,10 @@ class gnlms_LMS extends gn_WebInterface {
 		
 		$this->setSessionValue("selectedCourses", $selectedCourses);
 		
+	}
+	
+	function clearSelectedCourses () {
+		$this->setSessionValue("selectedCourses", array());
 	}
 
 	function createNonce () {
@@ -280,12 +285,34 @@ class gnlms_LMS extends gn_WebInterface {
 			case "shopping_cart_update":
 				$this->updateShoppingCart();
 				break;
+			case "checkout":
+				$this->doCheckout();
+				break;
 
 			default:
 				$this->defaultUpdateEdit($name);
 		}
 
 
+	}
+	
+	function doCheckout () {
+		do_action("gnlms_checkout_submit");
+		
+		$userID = get_current_user_id();
+		$courseIDs = $_POST['course_id'];
+				
+		try { 
+			$this->data->assignUserCourses($userID, $courseIDs);
+		}
+		catch (Exception $e) {
+			$_GET['err'] = $e->getMessage();
+			return;
+		}
+		
+		$this->clearSelectedCourses();
+		wp_redirect("/checkout-confirm/?".http_build_query(array("course_id"=>$courseIDs)));
+		exit();
 	}
 	
 	function updateShoppingCart () {
@@ -336,7 +363,8 @@ class gnlms_LMS extends gn_WebInterface {
 	function getRolesForAction ($action) {
 		$defaults = array("administrator", "lms_admin");
 		$roles = array(
-			"shopping_cart_update"=>array("lms_user")
+			"shopping_cart_update"=>array("lms_user"),
+			"checkout"=>array("lms_user")
 		);
 		
 		return array_key_exists($action, $roles) ? array_merge($defaults, $roles[$action]) : $defaults;
@@ -692,6 +720,15 @@ class gnlms_LMS extends gn_WebInterface {
 		ob_start();
 		include(dirname(__FILE__)."/forms/checkout.php");
 		return ob_get_clean();
+	}
+	
+	function gnlms_checkout_confirm () {
+		$atts = shortcode_atts(array("title"=>"Registration Complete"), $atts, "gnlms_checkout");
+		$courses = $this->data->fetchCourses($_GET['course_id']);
+		ob_start();
+		$this->displayTemplate("templates/checkout-confirm.php", $courses, $atts);
+		return ob_get_clean();
+		
 	}
 	
 	function getCoursePrice ($courseID, $userID) {

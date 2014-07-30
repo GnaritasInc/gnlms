@@ -385,9 +385,18 @@ class gnlms_Data extends gn_PluginDB {
 		}
 	}
 	function assignUserCourses ($userID, $courseIDs) {
-		foreach($courseIDs as $courseID) {
-			$this->addUserCourseRegistration($userID, $courseID);
+		$this->db->query("start transaction");
+		try {
+			foreach($courseIDs as $courseID) {
+				$expiration_date = apply_filters("gnlms_course_expiration", null, $courseID, $userID);
+				$this->addUserCourseRegistration($userID, $courseID, $expiration_date);
+			}
 		}
+		catch (Exception $e) {
+			$this->db->query("rollback");
+			throw $e;
+		}
+		$this->db->query("commit");
 	}
 
 	function addUserCourseRegistration ($userID, $courseID, $expiration_date=null) {
