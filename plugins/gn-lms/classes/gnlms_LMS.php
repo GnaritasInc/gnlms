@@ -36,6 +36,7 @@ class gnlms_LMS extends gn_WebInterface {
 		add_shortcode("gnlms_data_support_form", array(&$this, "gnlms_data_support_form"));
 		add_shortcode("gnlms_launch_course", array(&$this, "gnlms_launch_course"));
 		add_shortcode("gnlms_course_detail", array(&$this, "gnlms_course_detail"));
+		add_shortcode("gnlms_checkout", array(&$this, "gnlms_checkout"));
 
 		
 		
@@ -681,6 +682,21 @@ class gnlms_LMS extends gn_WebInterface {
 		
 		return $this->gnlms_data_form($atts);
 	}
+	
+	function gnlms_checkout ($atts) {
+		
+		$atts = shortcode_atts(array("title"=>"Checkout"), $atts, "gnlms_checkout");		
+		$formFile = apply_filters("gnlms_checkout_template", dirname(__FILE__)."/forms/checkout.php");				
+		$selectedCourses = $this->data->fetchCourses($this->getSelectedCourses());
+		$userID = get_current_user_id();
+		ob_start();
+		include($formFile);
+		return ob_get_clean();
+	}
+	
+	function getCoursePrice ($courseID, $userID) {
+		return apply_filters("gnlms_course_price", 0, $courseID, $userID);
+	}	
 
 	function getClientScript($uid,$cid,$scormInterfaceURL, $courseURL) {
 		$str="";
