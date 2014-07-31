@@ -30,7 +30,8 @@ class gnlms_LMS extends gn_WebInterface {
 			"Content-Type: text/html; charset=utf-8"
 		);
 		
-		$this->enableSessions();
+		// DS: Using user meta for shopping cart storage.
+		// $this->enableSessions();
 
 		add_shortcode("gnlms_data_form", array(&$this, "gnlms_data_form"));
 		add_shortcode("gnlms_data_support_form", array(&$this, "gnlms_data_support_form"));
@@ -109,27 +110,41 @@ class gnlms_LMS extends gn_WebInterface {
 	}
 	
 	function getSelectedCourses () {
+		/*
 		$selectedCourses = (array_key_exists("selectedCourses", $_SESSION)) ? $this->getSessionValue("selectedCourses") : array();
 		return $selectedCourses;
+		*/
+		
+		return get_user_meta(get_current_user_id(), "gnlms_selected_courses");
 	}
 	
 	
 	function addSelectedCourse ($courseID) {
+		/*
 		$selectedCourses = $this->getSelectedCourses();
 		$selectedCourses[] = $courseID;
 		
 		$this->setSessionValue("selectedCourses", $selectedCourses);
+		*/
+		
+		add_user_meta(get_current_user_id(), "gnlms_selected_courses", $courseID);
 	}
 	
 	function removeSelectedCourse ($courseID) {
+		/*
 		$selectedCourses = array_diff($this->getSelectedCourses(), array($courseID));
 		
 		$this->setSessionValue("selectedCourses", $selectedCourses);
+		*/
+		
+		delete_user_meta(get_current_user_id(), "gnlms_selected_courses", $courseID);
 		
 	}
 	
 	function clearSelectedCourses () {
-		$this->setSessionValue("selectedCourses", array());
+		// $this->setSessionValue("selectedCourses", array());
+		
+		delete_user_meta(get_current_user_id(), "gnlms_selected_courses");
 	}
 
 	function createNonce () {
