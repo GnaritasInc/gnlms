@@ -316,7 +316,7 @@ class gnlms_LMS extends gn_WebInterface {
 		$userID = get_current_user_id();
 		$courseIDs = $_POST['course_id'];
 		
-		if ($err = apply_filters("gnlms_checkout_submit_error_message", "")) {
+		if ($err = apply_filters("gnlms_checkout_error_message", "")) {
 			$this->err = $err;
 			return;
 		}
@@ -330,7 +330,8 @@ class gnlms_LMS extends gn_WebInterface {
 		}
 		
 		$this->clearSelectedCourses();
-		wp_redirect("/checkout-confirm/?".http_build_query(array("course_id"=>$courseIDs)));
+		$params = apply_filters("gnlms_checkout_redirect_params", array("course_id"=>$courseIDs));
+		wp_redirect("/checkout-confirm/?".http_build_query($params));
 		exit();
 	}
 	

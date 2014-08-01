@@ -6,6 +6,7 @@
 <li><?php echo htmlspecialchars($course->title);?></li>
 <?php endforeach; ?>
 </ul>
+<?php echo apply_filters("gnlms_checkout_confirm_message", ""); ?>
 <p>Thank you!</p>
 <p><a href="/">Back to My Dashboard</a></p>
 </div>
