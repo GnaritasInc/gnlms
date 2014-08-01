@@ -312,16 +312,20 @@ class gnlms_LMS extends gn_WebInterface {
 	}
 	
 	function doCheckout () {
-		do_action("gnlms_checkout_submit");
 		
 		$userID = get_current_user_id();
 		$courseIDs = $_POST['course_id'];
+		
+		if ($err = apply_filters("gnlms_checkout_submit_error_message", "")) {
+			$this->err = $err;
+			return;
+		}
 				
 		try { 
 			$this->data->assignUserCourses($userID, $courseIDs);
 		}
 		catch (Exception $e) {
-			$_GET['err'] = $e->getMessage();
+			$this->err = $e->getMessage();
 			return;
 		}
 		
