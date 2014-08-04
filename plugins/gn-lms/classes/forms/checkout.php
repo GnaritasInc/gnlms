@@ -17,7 +17,11 @@
 <?php if($this->err): ?>
 	<p class="gnlms-msg gnlms-err">Error: <?php echo $this->err; ?></p>
 <?php endif; ?>
-<?php include($formFile); ?>
+<?php 
+	ob_start();
+	include($formFile);
+	echo apply_filters("gnlms_checkout_form", ob_get_clean());
+?>
 
 <?php else: ?>
 <p>Your shopping cart is empty.</p>
