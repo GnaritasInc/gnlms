@@ -15,4 +15,3 @@
 <?php else: ?>
 <p>No courses selected.</p>
 <?php endif; ?>
-</div>

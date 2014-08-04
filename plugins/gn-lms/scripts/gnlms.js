@@ -49,7 +49,7 @@ jQuery(document).ready(function ($) {
 	
 
 	
-	$("a.gnlms-open-dialog").button().click(function (event) {
+	$("a.gnlms-open-dialog").click(function (event) {
 		var myDialog = $("#"+$(this).attr("data-dialogid"));
 		if(myDialog.length) {
 			myDialog.dialog("open");
@@ -57,6 +57,8 @@ jQuery(document).ready(function ($) {
 			return false;
 		}
 	});
+	
+	$("a.gnlms-open-dialog:not(#menu a)").button();
 	
 	function ajaxFormSubmit() {
 		$.post(gnlms.ajaxurl, $(this).serialize(), ajaxPostComplete, "json");	
