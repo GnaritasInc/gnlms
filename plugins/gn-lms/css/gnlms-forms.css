@@ -20,7 +20,7 @@ form.gnlms_data_form p {
 	font-size: 12px;
 }
 
-.gnlms-shopping-cart form.shopping_cart_update {
+.gnlms-shopping-cart form.shopping_cart_update, .gnlms-course-status form.shopping_cart_update {
 	display: inline;
 }
 

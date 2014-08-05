@@ -167,11 +167,8 @@ class gnlms_Data extends gn_PluginDB {
 			),
 			
 			"user_available_courses"=>array(
-				"list_select_table"=>"#course# c",
-				"listcolumns"=>array("c.*"),
-				"context_filters"=>array(
-					"context_user_id"=>"c.id not in (select course_id from ".$this->prefixTableName('user_course_registration')." where user_id=#current_user_id#)"
-				)
+				"list_select_table"=>"#course# c left join #user_course_registration# ucr on c.id=ucr.course_id and ucr.record_status=1 and ucr.user_id=%d",
+				"listcolumns"=>array("c.*, ucr.course_status, ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score")
 			),
 
 			"course_users"=>array(
@@ -213,6 +210,16 @@ class gnlms_Data extends gn_PluginDB {
 	function tableName ($internalName) {
 		return $this->prefixTableName($internalName);
 	}
+
+	function listSelectTableName($name) {
+		$tableExpr = parent::listSelectTableName($name);
+		if ($name == "user_available_courses") {		
+			$tableExpr = $this->db->prepare($tableExpr, get_current_user_id());
+		}
+		
+		return $tableExpr;
+	}
+
 
 	function initTableDefinitions () {
 		require_once("includes/gnlms-data-table-defs.php");

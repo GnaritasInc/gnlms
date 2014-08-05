@@ -828,23 +828,23 @@ class gnlms_LMS extends gn_WebInterface {
 		$str.="<p class='class='gnScormSuccessfulLaunch'>When you have finished your session with the course, this dialog may be closed.</p>";
 
 
-
-
-
-
 		return ($str);
-}
+	}
 
-function getCourseURL ($cid) {
-		// $sql ="select url from gnlms_course where id=$cid";
+	function getCourseLaunchURL ($cid) {
+		return "/course-monitor/?id=$cid";
+	}
 
-		$sql = $this->data->db->prepare("select url from ".$this->data->tableName('course')." where id=%d", $cid);
-		return ($this->data->db->get_var($sql));
-}
+	function getCourseURL ($cid) {
+			// $sql ="select url from gnlms_course where id=$cid";
+
+			$sql = $this->data->db->prepare("select url from ".$this->data->tableName('course')." where id=%d", $cid);
+			return ($this->data->db->get_var($sql));
+	}
 	function retrieveRegistration($uid, $cid) {
 		// $sql ="select record_status from gnlms_user_course_registration where user_id=$uid and course_id=$cid";
 
-		$sql ="select record_status, expiration_date from ".$this->data->tableName('user_course_registration')." where user_id=%d and course_id=%d";
+		$sql ="select * from ".$this->data->tableName('user_course_registration')." where user_id=%d and course_id=%d";
 		$sql = $this->data->db->prepare($sql, $uid, $cid);
 		//return ($this->data->db->get_var($sql));
 
