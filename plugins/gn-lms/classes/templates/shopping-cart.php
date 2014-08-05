@@ -1,17 +1,6 @@
-<?php if(count($records)): 
-	$action = "gnlms_shopping_cart_remove";
-	$actionText = "Remove";
-	$formFile = dirname(dirname(__FILE__))."/forms/_shopping_cart_update.php"
-?>
-	<ul class="gnlms-shopping-cart">
-	<?php foreach($records as $course): $id = $course->id; ?>
-		<li class="gnlms-course-title">
-			<a href="/course-detail/?id=<?php echo $course->id; ?>"><?php echo htmlspecialchars($course->title); ?></a>
-			<?php include($formFile); ?>
-		</li>
-	<?php endforeach; ?>
-	</ul>
-<p><a href="/checkout/">Proceed to checkout</a></p>
-<?php else: ?>
-<p>No courses selected.</p>
-<?php endif; ?>
+<h2><?php echo $atts['title']; ?></h2>
+<div class="full_span">
+
+<?php include("_shopping_cart_content.php"); ?>
+
+</div>

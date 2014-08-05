@@ -59,7 +59,7 @@ function super ($methodName) {
 		add_shortcode('gnlms_subscription_code_courses', array(&$this, 'listSubscriptionCodeCourses'));
 		add_shortcode('gnlms_organization_courses', array(&$this, 'listOrganizationCourses'));
 		
-		add_shortcode('gnlms_shopping_cart', array(&$this, 'doShoppingCart'));
+		// add_shortcode('gnlms_shopping_cart', array(&$this, 'doShoppingCart'));
 		
 		add_shortcode('gnlms_button', array(&$this, 'getButtonHTML'));
 

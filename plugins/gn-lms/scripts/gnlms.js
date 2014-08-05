@@ -47,6 +47,22 @@ jQuery(document).ready(function ($) {
 		});
 	});
 	
+	$("#gnlms-sc-dialog").dialog("option", {"buttons":{"OK": function () { $(this).dialog("close"); }}});
+	
+	$("#gnlms-sc-dialog form.shopping_cart_update").submit(function (e) {
+		e.preventDefault();
+		ajaxFormSubmit.call(this, function (data, textStatus, xhr) {
+			if(data.status != "OK") {
+				reportAjaxError(data.msg);
+			}
+			else {
+				$(".gnlms-shopping-cart-content", $("#gnlms-sc-dialog")).replaceWith(data.html);
+			}
+		});
+		
+		return false;
+	});
+	
 
 	
 	$("a.gnlms-open-dialog").click(function (event) {
@@ -60,8 +76,9 @@ jQuery(document).ready(function ($) {
 	
 	$("a.gnlms-open-dialog:not(#menu a)").button();
 	
-	function ajaxFormSubmit() {
-		$.post(gnlms.ajaxurl, $(this).serialize(), ajaxPostComplete, "json");	
+	function ajaxFormSubmit(complete) {
+		complete = complete || ajaxPostComplete;
+		$.post(gnlms.ajaxurl, $(this).serialize(), complete, "json");	
 	}
 	
 	
