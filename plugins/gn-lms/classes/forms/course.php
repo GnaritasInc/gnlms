@@ -6,6 +6,14 @@
 	$id = $context['id'];
 	$registration = $this->retrieveRegistration(get_current_user_id(), $id);
 	
+	$msg = "";
+	if (strlen(trim($_GET['msg']))) {
+		$msg = trim($_GET['msg']);
+	}
+	else if ($this->err) {
+		$msg = $this->err;
+	}
+	
 	if ($registration) {
 		switch($registration->course_status) {
 			case "Registered":
@@ -30,7 +38,7 @@
 <h3><?php echo htmlspecialchars($context['title']); ?></h3>
 <p><?php echo htmlspecialchars(trim($context['description'])); ?></p>
 <div class="gnlms-course-status">
-<?php if($msg=trim($_GET['msg'])): ?><p class="gnlms-msg"><?php echo htmlspecialchars($msg); ?></p><?php endif; ?>
+<?php if($msg): ?><p class="gnlms-msg"><?php echo htmlspecialchars($msg); ?></p><?php endif; ?>
 <?php echo $statusText; ?> <?php if(!$registration) include("_shopping_cart_update.php"); ?>
 </div>
 </div>

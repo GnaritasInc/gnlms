@@ -351,7 +351,7 @@ class gnlms_LMS extends gn_WebInterface {
 			$msg = "Unknown action.";
 		}
 		
-		return $msg;		
+		return $msg;	
 	}
 	
 	function updateShoppingCart () {
@@ -370,7 +370,8 @@ class gnlms_LMS extends gn_WebInterface {
 			}
 		}
 		else {
-			$msg = "Error: $msg";
+			$this->err = "Error: $msg";
+			return;
 		}
 		
 		$redirectURL = $_SERVER['PATH_INFO'] . '?' . http_build_query(array_merge($_GET, array("msg"=>$msg)));
