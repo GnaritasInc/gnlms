@@ -20,7 +20,7 @@
 <?php 
 	ob_start();
 	include($formFile);
-	echo apply_filters("gnlms_checkout_form", ob_get_clean());
+	echo apply_filters("gnlms_checkout_form", ob_get_clean(), $selectedCourses, $totalCost);
 ?>
 
 <?php else: ?>
