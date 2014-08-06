@@ -57,6 +57,14 @@ jQuery(document).ready(function ($) {
 			}
 			else {
 				$(".gnlms-shopping-cart-content", $("#gnlms-sc-dialog")).replaceWith(data.html);
+				$("#gnlms-sc-dialog").on("dialogclose", function () {
+					var params = getParams();
+					if ("msg" in params) {
+						delete params.msg;
+						location.replace(location.pathname + "?" + $.param(params));
+					}
+					else location.reload(true);
+				});
 			}
 		});
 		
