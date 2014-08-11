@@ -66,8 +66,8 @@ class gnlms_ReportData extends gn_PluginDB {
 				"orderBy"=>"caq.sequence"
 			),
 			"course-completion"=>array(
-				"columns"=>"u.email as 'Email', u.last_name as 'Last Name', u.first_name as 'First Name', o.name as 'Organization', c.title as 'Course', ucr.course_completion_date as 'Date', case when ucr.score > 70 then 'Pass' else 'Fail' end as 'Result'",
-				"tableExpr"=>"#user# u inner join #user_course_registration# ucr on u.id=ucr.user_id and ucr.course_status='Completed' inner join #course# c on c.id=ucr.course_id left join #organization# o on o.id=u.organization_id",
+				"columns"=>"u.email as 'Email', u.last_name as 'Last Name', u.first_name as 'First Name', o.name as 'Organization', c.title as 'Course', ucr.course_completion_date as 'Date', case when ucr.course_status='Completed' then 'Pass' else 'Fail' end as 'Result'",
+				"tableExpr"=>"#user# u inner join #user_course_registration# ucr on u.id=ucr.user_id and (ucr.course_status='Completed' or ucr.course_status='Failed') inner join #course# c on c.id=ucr.course_id left join #organization# o on o.id=u.organization_id",
 				"filters"=>array(
 					"_between"=>array("ucr.course_completion_date", "start_date", "end_date"),
 					"_contains"=>array("u.email", "email"),
