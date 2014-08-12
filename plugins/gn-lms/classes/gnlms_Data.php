@@ -444,6 +444,8 @@ class gnlms_Data extends gn_PluginDB {
 		);
 
 		if($expiration_date) $values["expiration_date"] = $expiration_date;
+		
+		$values = apply_filters("gnlms_ucr_data", $values);
 
 		$sql = $this->getUpdateEditSQL("user_course_registration", $values, true);
 		$this->dbSafeExecute($sql);
