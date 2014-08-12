@@ -57,6 +57,27 @@ class gnlms_Data extends gn_PluginDB {
 				),
 				"validationFunction"=>"validateUser"
 			),
+			
+			"ecommerce"=>array(
+				"table"=>"ecommerce",
+				"columns"=>array(
+					"id",
+					"user_id",
+					"transaction_date",
+					"transaction_id",
+					"transaction_amount"				
+				)
+			),
+			
+			"ecommerce_item"=>array(
+				"table"=>"ecommerce_item",
+				"columns"=>array(
+					"id",
+					"ecommerce_id",
+					"course_id",
+					"course_price"
+				)
+			),
 
 			"user_course_registration"=>array(
 				"table"=>"user_course_registration",
@@ -65,6 +86,8 @@ class gnlms_Data extends gn_PluginDB {
 					"course_id",
 					"user_id",
 					"registration_date",
+					"registration_type",
+					"ec_item_id",
 					"expiration_date",
 					"course_status",
 					"course_completion_date",
@@ -75,7 +98,8 @@ class gnlms_Data extends gn_PluginDB {
 				"defaults"=>array(
 					"record_status"=>0,
 					"expiration_date"=>null,
-					"course_completion_date"=>null
+					"course_completion_date"=>null,
+					"ec_item_id"=>null
 				)
 			),
 
@@ -563,7 +587,7 @@ class gnlms_Data extends gn_PluginDB {
 
 		foreach(array_keys($this->adminAlerts) as $i=>$alert) {
 			$columns[] = "um$i.meta_value as '$alert'";
-			$joins[] = "left join ".$this->db->usermeta." um$i on u.id=um$i.user_id and um$i.meta_key='#alert_#$alert'";
+			$joins[] = "left join ".$this->db->usermeta." um$i on u.id=um$i.user_id and um$i.meta_key='".$this->replaceTableRefs('#alert_#')."$alert'";
 		}
 
 		$sql = "select ".implode(", ", $columns)." from ".$this->db->users." u ".implode(" ", $joins)." where u.id=%d";
@@ -581,7 +605,7 @@ class gnlms_Data extends gn_PluginDB {
 
 		$result = true;
 		foreach($prefs as $key=>$value) {
-			$meta_key = $this->replaceTablerefs("#alert_#$key");
+			$meta_key = $this->replaceTableRefs("#alert_#$key");
 			error_log("Updating preference: $meta_key=>$value");
 			delete_user_meta($userID, $meta_key);
 			$result = $result && update_user_meta($userID, $meta_key, $value);

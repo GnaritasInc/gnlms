@@ -56,7 +56,7 @@ $this->tableDefinitions = array (
 		 PRIMARY KEY  (id),
 		 KEY #user_organization# (organization_id),
 		 KEY #user_subscription_code# (subscription_code_id),
-		 CONSTRAINT #user_ibfk_1# FOREIGN KEY (id) REFERENCES $wp_users (ID) ON DELETE CASCADE ON UPDATE CASCADE,
+		 CONSTRAINT #user_ibfk_1# FOREIGN KEY (id) REFERENCES $wp_users (ID) ON DELETE NO ACTION ON UPDATE CASCADE,
 		 CONSTRAINT #user_organization# FOREIGN KEY (organization_id) REFERENCES #organization# (id) ON DELETE SET NULL ON UPDATE CASCADE,
 		 CONSTRAINT #user_subscription_code# FOREIGN KEY (subscription_code_id) REFERENCES #subscription_code# (id) ON DELETE SET NULL ON UPDATE CASCADE
 		) ENGINE=InnoDB",
@@ -77,11 +77,37 @@ $this->tableDefinitions = array (
 		 CONSTRAINT #subscription_code_course_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB",
 
+	"ecommerce"=>"(
+		  id int(11) NOT NULL AUTO_INCREMENT,
+		  user_id bigint(20) unsigned NOT NULL,
+		  transaction_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		  transaction_id varchar(45) NOT NULL,
+		  transaction_amount decimal(8,2) NOT NULL,
+		  PRIMARY KEY (id),
+		  UNIQUE KEY transaction_id_UNIQUE (transaction_id),
+		  KEY #ec_user_idx# (user_id),
+		  CONSTRAINT #ec_user# FOREIGN KEY (user_id) REFERENCES #user# (id) ON UPDATE CASCADE ON DELETE NO ACTION
+		) ENGINE=InnoDB",
+	
+	"ecommerce_item"=>"(
+		  id int(11) NOT NULL AUTO_INCREMENT,
+		  ecommerce_id int(11) NOT NULL,
+		  course_id int(11) NOT NULL,
+		  course_price decimal(8,2) NOT NULL,
+		  PRIMARY KEY (id),
+		  KEY #ec_item_ecommerce_idx# (ecommerce_id),
+		  KEY #ec_item_course_idx# (course_id),
+		  CONSTRAINT #ec_item_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON UPDATE CASCADE,
+		  CONSTRAINT #ec_item_ecommerce# FOREIGN KEY (ecommerce_id) REFERENCES #ecommerce# (id) ON UPDATE CASCADE
+		) ENGINE=InnoDB",
+
 	"user_course_registration"=> "(
 		id int(11) NOT NULL AUTO_INCREMENT,
 		 course_id int(11) NOT NULL DEFAULT '0',
 		 user_id bigint(20) unsigned NOT NULL DEFAULT '0',
 		 registration_date datetime DEFAULT NULL,
+		 registration_type int(11) NOT NULL DEFAULT '1',
+		 ec_item_id int(11) DEFAULT NULL,
 		 expiration_date date DEFAULT NULL,
 		 course_status varchar(45) DEFAULT NULL,
 		 course_completion_date date DEFAULT NULL,
@@ -92,8 +118,10 @@ $this->tableDefinitions = array (
 		 UNIQUE KEY #unique_user_course# (course_id,user_id),
 		 KEY #user_course_registration_course# (course_id),
 		 KEY #user_id# (user_id),
+		 KEY #ucr_ec_item_idx# (ec_item_id),
 		 CONSTRAINT #user_course_registration_ibfk_1# FOREIGN KEY (user_id) REFERENCES $wp_users (ID) ON DELETE CASCADE ON UPDATE CASCADE,
-		 CONSTRAINT #user_course_registration_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE CASCADE ON UPDATE CASCADE
+		 CONSTRAINT #user_course_registration_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE CASCADE ON UPDATE CASCADE,
+		 CONSTRAINT #ucr_ec_item# FOREIGN KEY (ec_item_id) REFERENCES #ecommerce_item# (id) ON DELETE RESTRICT ON UPDATE CASCADE
 		) ENGINE=InnoDB",
 
 	"user_course_assessment_response"=> "(
