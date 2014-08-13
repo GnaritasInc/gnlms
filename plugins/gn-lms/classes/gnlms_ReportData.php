@@ -81,7 +81,21 @@ class gnlms_ReportData extends gn_PluginDB {
 					"course"=>array("c.title", "Course"),
 					"result"=>array("case when ucr.score > 70 then 1 else 0 end", "Result")
 				)
-			)
+			),
+			"ecommerce"=>array(
+				"columns"=>"u.email as 'Email', u.last_name as 'Last Name', u.first_name as 'First Name', o.name as 'Organization', ec.transaction_id as 'Transaction ID', concat('$', format(ec.transaction_amount, 2)) as 'Amount', ec.transaction_date as 'Date'",
+				"tableExpr"=>"#ecommerce# ec left join #user# u on ec.user_id=u.id left join #organization# o on o.id=u.organization_id",
+				"filters"=>array(
+					"_between"=>array("date(ec.transaction_date)", "start_date", "end_date"),
+					"_contains"=>array("u.email", "email"),
+					"o.id"=>"organization_id"					
+				),
+				"orderBy"=>array(
+					"date"=>array("ec.transaction_date desc", "Date (desc)"),
+					"last_name"=>array("u.last_name", "Last Name"),
+					"org"=>array("o.name", "Organization")				
+				)
+			)			
 		);
 	}
 
@@ -205,22 +219,39 @@ class gnlms_ReportData extends gn_PluginDB {
 	}
 
 	function fetchUserOrganizations () {
-		$sql = "select id, name from #organization# where id in (select organization_id from #user#) order by name";
-		$sql = $this->replaceTableRefs($sql);
-		return $this->db->get_results($sql);
+		
+		$filterSQL = "select organization_id from #user#";
+		return $this->fetchOrganizations($filterSQL);
 	}
 
 	function fetchUserActivityOrganizations () {
-		$sql = "select id, name from #organization# where id in (select u.organization_id from #user# u inner join #user_course_event# uce on uce.user_id=u.id) order by name";
-		$sql = $this->replaceTableRefs($sql);
-		return $this->db->get_results($sql);
+		$filterSQL = "select u.organization_id from #user# u inner join #user_course_event# uce on uce.user_id=u.id";
+		return $this->fetchOrganizations($filterSQL);
 	}
 
 	function fetchCourseCompletionOrganizations () {
 		// DS: Changing to return all organizations
 		// $sql = "select id, name from #organization# where id in (select u.organization_id from #user# u inner join #user_course_registration# ucr on u.id=ucr.user_id where ucr.course_status='Completed') order by name";
 
-		$sql = "select id, name from #organization# where record_status=1 order by name";
+		
+		return $this->fetchOrganizations();
+	}
+	
+	function fetchEcommerceOrganizations () {
+		$filterSQL = "select u.organization_id from #user# u inner join #ecommerce# ec on u.id=ec.user_id";
+		return $this->fetchOrganizations($filterSQL);
+	}
+	
+	function fetchOrganizations ($filterSQL="") {
+		$sql = "select id, name from #organization#";
+		if($filterSQL) {
+			$sql .= " where id in ($filterSQL)";
+		}
+		else {
+			$sql .= " where record_status=1";
+		}		
+		$sql .= " order by name";
+		
 		$sql = $this->replaceTableRefs($sql);
 		return $this->db->get_results($sql);
 	}

@@ -24,7 +24,8 @@ class gnlms_Report {
 			"user-activity"=>"User Activity",
 			"assessment-responses"=>"Course Post-Test: User Responses",
 			"assessment-summary"=>"Course Post-Test: Course Summary",
-			"course-completion"=>"Course Completion"
+			"course-completion"=>"Course Completion",
+			"ecommerce"=>"Ecommerce Transactions"
 		);
 		$title = $titles[$report];
 		echo("<h2>$title</h2>");
@@ -81,7 +82,13 @@ class gnlms_Report {
 			
 			echo("<option value='$key' $selected>$text</option>");
 		}
-	}	
+	}
+	
+	function formatValue ($key, $value) {
+		
+		return htmlspecialchars($value);
+		
+	}
 
 }
 

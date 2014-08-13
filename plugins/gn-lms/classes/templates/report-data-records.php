@@ -32,7 +32,7 @@
 
 	<tr>
 	<?php foreach($record as $key=>$value): ?>
-	<td><?php echo(htmlspecialchars($value)); ?></td>
+	<td><?php echo($this->formatValue($key, $value)); ?></td>
 	<?php endforeach; ?>
 	</tr>
 

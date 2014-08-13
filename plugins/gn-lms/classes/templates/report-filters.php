@@ -111,6 +111,25 @@
 		<br/>Order by
 	</label>
 
+<?php elseif($report=="ecommerce"): ?>
+	<div class="gnlms_range"><label>Date between <input type="date" name="start_date" value="{start_date}" /></label> <label>and <input type="date" name="end_date" value="{end_date}"/></label></div>
+	<label><input type="text" name="email" value="{email}" />Email contains</label>
+	<label>
+		<select name="organization_id">
+			<option value="">All</option>
+			<option value="null"<?php echo $_GET['organization_id']=='null' ? " selected='selected'" : ""; ?>>No organization</option>
+			<?php foreach($this->data->fetchEcommerceOrganizations() as $org): ?>
+			<option value="<?php echo $org->id; ?>"<?php echo $_GET['organization_id']==$org->id ? " selected='selected'" : ""; ?>><?php echo htmlspecialchars($org->name); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<br/>Organization
+	</label>
+	<label>
+		<select name="sort">
+			<?php $this->writeOrderByOptions($report); ?>
+		</select>
+		<br/>Order by
+	</label>
 <?php endif; ?>
 
 
