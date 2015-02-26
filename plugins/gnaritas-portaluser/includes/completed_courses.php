@@ -1,12 +1,13 @@
-<h2>Completed Courses</h2>
-<div class="full_span">
 <?php
-
 global $records;
 $records = gn_current_user_completed_courses ();
+$empty = (!$records || count($records)==0) ? true : false;
+?>
 
-
-if (!$records || count($records)==0) {
+<h2>Completed Courses</h2>
+<div class="full_span<?php echo $empty ? " gn-empty" : ""?>">
+<?php
+if ($empty) {
 	echo ("<i>No courses found</i>");
 }
 else {

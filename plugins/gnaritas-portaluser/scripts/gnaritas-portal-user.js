@@ -8,6 +8,7 @@ jQuery(document).ready (function (){
 		
 	});
 
-jQuery("#registerform p:eq(1) label").prepend("*");
+	jQuery("#registerform p:eq(1) label").prepend("*");
+	jQuery(".cfct-module").has(".gn-empty").hide();
 	
 });
