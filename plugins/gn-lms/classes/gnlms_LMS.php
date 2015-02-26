@@ -81,12 +81,45 @@ class gnlms_LMS extends gn_WebInterface {
 
 
 
+
+		/*  These new registration items  */
+
 		// Registration
 
 		add_action('register_form',array(&$this, 'registrationAddFields'));
 		add_action('register_post',array(&$this, 'registrationCheckFields'),10,3);
 		add_action('user_register', array(&$this, 'registrationDbInsertFields'));
 
+
+		add_action('signup_extra_fields',array(&$this, 'registrationAddFields'));
+
+
+
+		add_action('profile_update', array(&$this, 'updateLMSUser'));
+
+		add_action ('edit_user_profile_update', array(&$this, 'saveCustomProfileFields'));
+		add_action ('personal_options_update', array(&$this, 'saveCustomProfileFields'));
+
+		add_action('edit_user_profile', array(&$this, 'showCustomProfileFields'));
+		add_action('show_user_profile', array(&$this, 'showCustomProfileFields'));
+
+		// Page access
+
+		//add_action("template_redirect", array(&$this, "checkPageAccess"));
+
+
+		/* End New */
+
+
+		// Registration
+
+		/*  These Old registration items
+		// Commented out now
+
+		add_action('register_form',array(&$this, 'registrationAddFields'));
+		add_action('register_post',array(&$this, 'registrationCheckFields'),10,3);
+		add_action('user_register', array(&$this, 'registrationDbInsertFields'));
+		*/
 
 
 	}
@@ -1029,6 +1062,7 @@ class gnlms_LMS extends gn_WebInterface {
 
 
 
+
 	// *********************************
 	// Registration
 
@@ -1068,6 +1102,7 @@ class gnlms_LMS extends gn_WebInterface {
 
 
 	function registrationAddFields () {
+		error_log("Showing Registration");
 		$context = $_POST;
 		$context["_is_registration"] = true;
 
@@ -1075,6 +1110,15 @@ class gnlms_LMS extends gn_WebInterface {
 		$this->displayTemplate("forms/_user_fields.php", $context);
 		echo( ob_get_clean());
 
+	}
+
+	function showCustomProfileFields ($user) {
+		$checked = $user && get_user_meta ($user->ID, "gnlms_test", true) ? " checked='checked'" : "";
+		echo("<label><input type='checkbox' name='test' value='1' $checked /> Test account</label>");
+	}
+
+	function saveCustomProfileFields ($user_id) {
+		update_user_meta ($user_id, "gnlms_test", (strlen(trim($_POST['test'])) ? 1 : 0));
 	}
 
 	function registrationCheckFields ($login, $email, $errors) {
@@ -1112,7 +1156,7 @@ class gnlms_LMS extends gn_WebInterface {
 	}
 
 function registrationDbInsertFields($user_id) {
-		error_log("Doing DB Update");
+		// error_log("Doing DB Update");
 
 		$this->addLMSUser($user_id);
 
@@ -1126,7 +1170,7 @@ function registrationDbInsertFields($user_id) {
 		$doRedirect = trim($_POST['_redirect']) ? true : false;
 
 		$this->defaultUpdateEdit ("user", $doRedirect);
-		error_log("Finished DB Update");
+		// error_log("Finished DB Update");
 
 	}
 
@@ -1146,10 +1190,8 @@ function registrationDbInsertFields($user_id) {
 	}
 
 
+// End Registration
 
-
-	// End Registration
-	// **********************************************************************
 
 
 	function var_error_log( $object=null ){
