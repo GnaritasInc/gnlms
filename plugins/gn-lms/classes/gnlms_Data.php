@@ -191,8 +191,13 @@ class gnlms_Data extends gn_PluginDB {
 			),
 			
 			"user_available_courses"=>array(
+				/* DS: Modifying to return inactive registrations
 				"list_select_table"=>"#course# c left join #user_course_registration# ucr on c.id=ucr.course_id and ucr.record_status=1 and ucr.user_id=%d",
 				"listcolumns"=>array("c.*, ucr.course_status, ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score")
+				*/
+				
+				"list_select_table"=>"#course# c left join #user_course_registration# ucr on c.id=ucr.course_id and ucr.user_id=%d",
+				"listcolumns"=>array("c.*, case when ucr.record_status=0 then 'Inactive' else ucr.course_status end as 'course_status', ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score")				
 			),
 
 			"course_users"=>array(

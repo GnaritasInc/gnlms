@@ -1,6 +1,6 @@
 <?php if($records): global $gnlms; $selectedCourses = $gnlms->getSelectedCourses(); ?>
 <table>
-<tr><th>Title</th><th>Status</th></tr>
+<tr><th>Title</th><th>Status/Action</th></tr>
 <?php foreach($records as $course): 
 	if($course->course_status) {
 		$status = $course->course_status;
@@ -18,6 +18,7 @@
 		</tr>
 <?php endforeach; ?>
 </table>
+<?php include("_course_monitor.php"); ?>
 <?php else: ?>
 	<p>No available courses.</p>
 <?php endif; ?>
