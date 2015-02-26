@@ -58,18 +58,18 @@ function super ($methodName) {
 		add_shortcode('gnlms_subscription_codes', array(&$this, 'listSubscriptionCodes'));
 		add_shortcode('gnlms_subscription_code_courses', array(&$this, 'listSubscriptionCodeCourses'));
 		add_shortcode('gnlms_organization_courses', array(&$this, 'listOrganizationCourses'));
-		
+
 		// add_shortcode('gnlms_shopping_cart', array(&$this, 'doShoppingCart'));
-		
+
 		add_shortcode('gnlms_button', array(&$this, 'getButtonHTML'));
 
 	}
-	
-	
+
+
 	function getButtonHTML ($atts, $content, $code) {
 		$href = get_site_url().$atts['href'];
 		$button = "<a class='gnlms-button' href='$href'>".htmlspecialchars($content)."</a>";
-		
+
 		return $button;
 	}
 
@@ -83,7 +83,7 @@ function super ($methodName) {
 		$atts["context_filter"]="context_user_id";
 		return $this->gn_short_list($atts, $content, $code);
 	}
-	
+
 	function doUserAvailableCourseList ($atts, $content, $code) {
 		$atts["key"] = "user_available_courses";
 		$atts["context_filter"]="context_user_id";
@@ -172,6 +172,7 @@ function super ($methodName) {
 		$atts["context_key"] = $this->getContextKey($atts);
 		$atts["context_filter"]="context_user_id";
 		$atts["defaultsort"] = "date_completed desc";
+		//return $this->doCustomList("admin-user-completed-courses", $atts);
 		return $this->gn_full_list($atts, $content, $code);
 	}
 
@@ -180,7 +181,7 @@ function super ($methodName) {
 		$atts["defaultsort"] = "uce.event_date desc";
 		return $this->gn_full_list($atts, $content, $code);
 	}
-	
+
 	function doShoppingCart ($atts, $content, $code) {
 		$atts["key"]="shopping_cart";
 		return $this->gn_full_list($atts, $content, $code);
@@ -310,12 +311,13 @@ function super ($methodName) {
 				$output = $this->outputTreeViewList($atts, "admin-course-list.php");
 				break;
 			case "user_current_courses":
-				$output = $this->outputTreeViewList($atts, "user-current-courses.php");
+				// $output = $this->outputTreeViewList($atts, "user-current-courses.php");
+				$output = $this->doCustomList("user-current-courses", $atts);
 				break;
 			case "user_available_courses":
 				$output = $this->doCustomList("user-available-courses", $atts);
 				break;
-			
+
 			case "announcement":
 				$output = $this->doAnnouncementsList($atts);
 				break;
@@ -327,6 +329,9 @@ function super ($methodName) {
 				break;
 			case "admin_user_current_courses":
 				$output = $this->doCustomList("admin-user-courses", $atts);
+				break;
+			case "admin_user_completed_courses":
+				$output = $this->doCustomList("admin-user-completed-courses", $atts);
 				break;
 			case "shopping_cart":
 				$output = $this->doCustomList("shopping-cart", $atts, $this->data->fetchCourses($gnlms->getSelectedCourses()));

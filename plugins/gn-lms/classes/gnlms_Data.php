@@ -57,7 +57,7 @@ class gnlms_Data extends gn_PluginDB {
 				),
 				"validationFunction"=>"validateUser"
 			),
-			
+
 			"ecommerce"=>array(
 				"table"=>"ecommerce",
 				"columns"=>array(
@@ -65,10 +65,10 @@ class gnlms_Data extends gn_PluginDB {
 					"user_id",
 					"transaction_date",
 					"transaction_id",
-					"transaction_amount"				
+					"transaction_amount"
 				)
 			),
-			
+
 			"ecommerce_item"=>array(
 				"table"=>"ecommerce_item",
 				"columns"=>array(
@@ -182,17 +182,22 @@ class gnlms_Data extends gn_PluginDB {
 			"user_current_courses"=>array(
 				// DS: Modifying to include expired courses
 				// "list_select_table"=>"#course# c inner join #user_course_registration# ucr on c.id=ucr.course_id and ucr.course_completion_date is null and (ucr.expiration_date > current_date() or ucr.expiration_date is null)",
-				
+
 				"list_select_table"=>"#course# c inner join #user_course_registration# ucr on c.id=ucr.course_id and ucr.course_status != 'Completed' and ucr.course_status != 'Failed' and ucr.record_status=1",
 				"listcolumns"=>array("c.id", "c.title", "c.description", "c.course_number", "ucr.course_status", "c.url", "if(ucr.expiration_date < current_date(), 1, 0) as 'expired'"),
 				"context_filters"=>array(
 					"context_user_id"=>"ucr.user_id=#current_user_id#"
 				)
 			),
-			
+
 			"user_available_courses"=>array(
+				/* DS: Modifying to return inactive registrations
 				"list_select_table"=>"#course# c left join #user_course_registration# ucr on c.id=ucr.course_id and ucr.record_status=1 and ucr.user_id=%d",
 				"listcolumns"=>array("c.*, ucr.course_status, ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score")
+				*/
+
+				"list_select_table"=>"#course# c left join #user_course_registration# ucr on c.id=ucr.course_id and ucr.user_id=%d",
+				"listcolumns"=>array("c.*, case when ucr.record_status=0 then 'Inactive' else ucr.course_status end as 'course_status', ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score")
 			),
 
 			"course_users"=>array(
@@ -216,7 +221,7 @@ class gnlms_Data extends gn_PluginDB {
 			),
 			"admin_user_completed_courses"=>array(
 				"list_select_table"=>"#course# c inner join #user_course_registration# ucr on c.id=ucr.course_id and ucr.course_completion_date is not null",
-				"listcolumns"=>array("c.id", "c.title", "c.course_number", "ucr.score", "date_format(ucr.course_completion_date, '%M %e, %Y') as 'date_completed'"),
+				"listcolumns"=>array("c.id","ucr.id as 'ur_id'", "c.title", "c.course_number", "ucr.score", "date_format(ucr.course_completion_date, '%M %e, %Y') as 'date_completed'"),
 				"context_filters"=>array(
 					"context_user_id"=>"ucr.user_id=#current_id#"
 				)
@@ -230,17 +235,17 @@ class gnlms_Data extends gn_PluginDB {
 
 
 	}
-	
+
 	function tableName ($internalName) {
 		return $this->prefixTableName($internalName);
 	}
 
 	function listSelectTableName($name) {
 		$tableExpr = parent::listSelectTableName($name);
-		if ($name == "user_available_courses") {		
+		if ($name == "user_available_courses") {
 			$tableExpr = $this->db->prepare($tableExpr, get_current_user_id());
 		}
-		
+
 		return $tableExpr;
 	}
 
@@ -289,14 +294,14 @@ class gnlms_Data extends gn_PluginDB {
 		$sql = $this->db->prepare($this->replaceTableRefs("select * from #course# where id=%d"), $courseID);
 		return $this->db->get_row($sql);
 	}
-	
+
 	function fetchCourses ($courseIDs) {
 		if(count($courseIDs)) {
 			$sql = $this->db->prepare($this->replaceTableRefs("select * from #course# where id in(". implode(', ', array_fill(0, count($courseIDs), '%d')) .") order by title"), $courseIDs);
 			return $this->db->get_results($sql);
 		}
 		else return array();
-		
+
 	}
 
 	function getCurrentCourse () {
@@ -444,7 +449,7 @@ class gnlms_Data extends gn_PluginDB {
 		);
 
 		if($expiration_date) $values["expiration_date"] = $expiration_date;
-		
+
 		$values = apply_filters("gnlms_ucr_data", $values);
 
 		$sql = $this->getUpdateEditSQL("user_course_registration", $values, true);

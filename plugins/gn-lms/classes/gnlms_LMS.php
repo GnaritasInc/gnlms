@@ -30,7 +30,7 @@ class gnlms_LMS extends gn_WebInterface {
 			"MIME-Version: 1.0",
 			"Content-Type: text/html; charset=utf-8"
 		);
-		
+
 		// DS: Using user meta for shopping cart storage.
 		// $this->enableSessions();
 
@@ -42,9 +42,9 @@ class gnlms_LMS extends gn_WebInterface {
 		add_shortcode("gnlms_checkout_confirm", array(&$this, "gnlms_checkout_confirm"));
 		add_shortcode("gnlms_shopping_cart", array(&$this, "gnlms_shopping_cart"));
 
-		
-		
-		
+
+
+
 		add_action("init", array(&$this, "controller"), 2);
 		add_action("init", array(&$this, "createNonce"));
 
@@ -77,6 +77,8 @@ class gnlms_LMS extends gn_WebInterface {
 
 		add_filter('gn_db_update_edit_value_defaults_filter', array(&$this, 'filterFormData'));
 
+		add_filter('user_contactmethods', array(&$this, 'gn_profile_filter'),10,1);
+
 
 
 		// Registration
@@ -88,67 +90,67 @@ class gnlms_LMS extends gn_WebInterface {
 
 
 	}
-	
+
 	function enableSessions () {
 		add_action('init', array(&$this, "initSession"), 1);
 		add_action('wp_logout', array(&$this, "destroySession"));
 		add_action('wp_login', array(&$this, "destroySession"));
 		add_filter('wp_redirect', array(&$this, "beforeRedirect"), 20, 2);
-		
+
 	}
-	
+
 	function beforeRedirect ($location, $status) {
 		session_write_close();
 		return $location;
 	}
-	
-	function initSession () {		
-		session_start(); 		
+
+	function initSession () {
+		session_start();
   		$this->setSessionValue("_gnlms_session_started", true);
 	}
-	
+
 	function destroySession () {
 		if (session_id()) {
 			session_destroy();
 		}
 	}
-	
+
 	function getSelectedCourses () {
 		/*
 		$selectedCourses = (array_key_exists("selectedCourses", $_SESSION)) ? $this->getSessionValue("selectedCourses") : array();
 		return $selectedCourses;
 		*/
-		
+
 		return get_user_meta(get_current_user_id(), "gnlms_selected_courses");
 	}
-	
-	
+
+
 	function addSelectedCourse ($courseID) {
 		/*
 		$selectedCourses = $this->getSelectedCourses();
 		$selectedCourses[] = $courseID;
-		
+
 		$this->setSessionValue("selectedCourses", $selectedCourses);
 		*/
-		
+
 		$this->removeSelectedCourse($courseID);
 		add_user_meta(get_current_user_id(), "gnlms_selected_courses", $courseID);
 	}
-	
+
 	function removeSelectedCourse ($courseID) {
 		/*
 		$selectedCourses = array_diff($this->getSelectedCourses(), array($courseID));
-		
+
 		$this->setSessionValue("selectedCourses", $selectedCourses);
 		*/
-		
+
 		delete_user_meta(get_current_user_id(), "gnlms_selected_courses", $courseID);
-		
+
 	}
-	
+
 	function clearSelectedCourses () {
 		// $this->setSessionValue("selectedCourses", array());
-		
+
 		delete_user_meta(get_current_user_id(), "gnlms_selected_courses");
 	}
 
@@ -270,9 +272,11 @@ class gnlms_LMS extends gn_WebInterface {
 		// wp_enqueue_style ('wp-jquery-ui-dialog');
 
 		// wp_enqueue_style('jquery-ui-custom', plugins_url("css/jquery-ui-1.8.23.custom.css", dirname(__FILE__)));
-
-		wp_enqueue_style('jquery-ui-custom', plugins_url("css/jquery-ui-1.9.2.custom.css", dirname(__FILE__)));
+		//wp_enqueue_style('jquery-ui-custom', plugins_url("css/jquery-ui-1.9.2.custom.css", dirname(__FILE__)));
+		wp_enqueue_style('jquery-ui-custom', plugins_url("css/jquery-ui.min.css", dirname(__FILE__)));
 	}
+
+
 
 	function register_form_styles () {
 		wp_enqueue_style( "gnlms-forms", plugins_url('css/gnlms-forms.css', dirname(__FILE__)));
@@ -315,31 +319,31 @@ class gnlms_LMS extends gn_WebInterface {
 
 
 	}
-	
+
 	function doCheckout () {
-		
+
 		$userID = get_current_user_id();
 		$courseIDs = $_POST['course_id'];
-		
+
 		if ($err = apply_filters("gnlms_checkout_error_message", "")) {
 			$this->err = $err;
 			return;
 		}
-				
-		try { 
+
+		try {
 			$this->data->assignUserCourses($userID, $courseIDs);
 		}
 		catch (Exception $e) {
 			$this->err = $e->getMessage();
 			return;
 		}
-		
+
 		$this->clearSelectedCourses();
 		$params = apply_filters("gnlms_checkout_redirect_params", array("course_id"=>$courseIDs));
 		wp_redirect("/checkout-confirm/?".http_build_query($params));
 		exit();
 	}
-	
+
 	function validateShoppingCart () {
 		$action = trim($_POST['action']);
 		$courseID = intval(trim($_POST['course_id']));
@@ -350,15 +354,15 @@ class gnlms_LMS extends gn_WebInterface {
 		else if (!in_array($action, array("gnlms_shopping_cart_add", "gnlms_shopping_cart_remove"))) {
 			$msg = "Unknown action.";
 		}
-		
-		return $msg;	
+
+		return $msg;
 	}
-	
+
 	function updateShoppingCart () {
 		$action = trim($_POST['action']);
 		$courseID = intval(trim($_POST['course_id']));
-		
-		if(!$msg = $this->validateShoppingCart()) {		
+
+		if(!$msg = $this->validateShoppingCart()) {
 			if ($action == "gnlms_shopping_cart_add") {
 				$this->addSelectedCourse($courseID);
 				$msg="Course added.";
@@ -373,17 +377,17 @@ class gnlms_LMS extends gn_WebInterface {
 			$this->err = "Error: $msg";
 			return;
 		}
-		
+
 		$redirectURL = $_SERVER['PATH_INFO'] . '?' . http_build_query(array_merge($_GET, array("msg"=>$msg)));
-		
+
 		wp_safe_redirect($redirectURL);
-		exit();		
+		exit();
 	}
-	
+
 	function ajaxUpdateShoppingCart () {
 		$action = trim($_POST['action']);
 		$courseID = intval(trim($_POST['course_id']));
-		
+
 		if($err = $this->validateShoppingCart()) {
 			$this->ajaxError($err);
 		}
@@ -394,9 +398,9 @@ class gnlms_LMS extends gn_WebInterface {
 			$atts = array("ajax"=>1);
 			ob_start();
 			include("templates/_shopping_cart_content.php");
-			
+
 			$this->ajaxSuccess(array("html"=>ob_get_clean()));
-			
+
 		}
 	}
 
@@ -416,21 +420,21 @@ class gnlms_LMS extends gn_WebInterface {
 
 		return $data;
 	}
-	
+
 	function getRolesForAction ($action) {
 		$allowedRoles = array("administrator", "lms_admin");
-		
+
 		$userActions = array(
 			"shopping_cart_update",
 			"checkout",
 			"gnlms_shopping_cart_remove",
 			"gnlms_shopping_cart_add"
 		);
-		
+
 		if (in_array($action, $userActions)) {
 			$allowedRoles[] = "lms_user";
 		}
-		
+
 		return  $allowedRoles;
 	}
 
@@ -440,8 +444,8 @@ class gnlms_LMS extends gn_WebInterface {
 			if ($this->user_in_role($role)) {
 				return true;
 			}
-		}	
-		
+		}
+
 		return false;
 	}
 
@@ -768,45 +772,45 @@ class gnlms_LMS extends gn_WebInterface {
 		return ob_get_clean();
 
 	}
-	
+
 	function gnlms_course_detail ($atts) {
 		$atts["name"] = "course";
 		$atts["code"] = "gnlms_course_detail";
-		
+
 		return $this->gnlms_data_form($atts);
 	}
-	
+
 	function gnlms_checkout ($atts) {
-		
-		$atts = shortcode_atts(array("title"=>"Checkout"), $atts, "gnlms_checkout");		
-		$formFile = dirname(__FILE__)."/forms/_checkout_default.php";				
+
+		$atts = shortcode_atts(array("title"=>"Checkout"), $atts, "gnlms_checkout");
+		$formFile = dirname(__FILE__)."/forms/_checkout_default.php";
 		$selectedCourses = $this->data->fetchCourses($this->getSelectedCourses());
 		$userID = get_current_user_id();
 		ob_start();
 		include(dirname(__FILE__)."/forms/checkout.php");
 		return ob_get_clean();
 	}
-	
+
 	function gnlms_checkout_confirm ($atts) {
 		$atts = shortcode_atts(array("title"=>"Registration Complete"), $atts, "gnlms_checkout");
 		$courses = $this->data->fetchCourses($_GET['course_id']);
 		ob_start();
 		$this->displayTemplate("templates/checkout-confirm.php", $courses, $atts);
 		return ob_get_clean();
-		
+
 	}
-	
+
 	function gnlms_shopping_cart ($atts) {
 		$atts = shortcode_atts(array("title"=>"My Shopping Cart", "ajax"=>''), $atts, "gnlms_shopping_cart");
 		$courses = $this->data->fetchCourses($this->getSelectedCourses());
 		ob_start();
 		$this->displayTemplate("templates/shopping-cart.php", $courses, $atts);
-		return ob_get_clean();		
+		return ob_get_clean();
 	}
-	
+
 	function getCoursePrice ($courseID, $userID) {
 		return apply_filters("gnlms_course_price", 0, $courseID, $userID);
-	}	
+	}
 
 	function getClientScript($uid,$cid,$scormInterfaceURL, $courseURL) {
 		$str="";
@@ -944,16 +948,16 @@ class gnlms_LMS extends gn_WebInterface {
 			echo(" $attribute='$attribute'");
 		}
 	}
-	
+
 	function writeLogMessage ($msg, $logPrefix) {
 		$now = time();
 		$logfile = dirname(__FILE__)."/log/{$logPrefix}_".date('Ymd', $now);
 		$timestamp = date('Y-m-d H:i:s T', $now);
 
 		error_log("[$timestamp] $msg\n", 3, $logfile);
-		
+
 	}
-	
+
 	function scormLog ($msg) {
 		$this->writeLogMessage($msg, "scorm");
 	}
@@ -966,7 +970,7 @@ class gnlms_LMS extends gn_WebInterface {
 
 		error_log("[$timestamp] $msg\n", 3, $logfile);
 		*/
-		
+
 		$this->writeLogMessage($msg, "alerts");
 	}
 
@@ -1146,6 +1150,37 @@ function registrationDbInsertFields($user_id) {
 
 	// End Registration
 	// **********************************************************************
+
+
+	function var_error_log( $object=null ){
+		ob_start();                    // start buffer capture
+		var_dump( $object );           // dump the values
+		$contents = ob_get_contents(); // put the buffer into a variable
+		ob_end_clean();                // end capture
+		error_log( $contents );        // log contents of the result of var_dump( $object )
+	}
+
+	function gn_profile_filter( $contactmethods ) {
+	    // Add new ones
+	   /*
+	   $contactmethods['twitter'] = 'Twitter';
+	    $contactmethods['identica'] = 'Identi.ca';
+	    $contactmethods['facebook'] = 'Facebook';
+	    $contactmethods['netlog'] = 'Netlog';
+	    */
+
+	    // remove unwanted
+	    unset($contactmethods['aim']);
+	    unset($contactmethods['jabber']);
+	    unset($contactmethods['yim']);
+	    unset($contactmethods['website']);
+
+	    $this->var_error_log($contactmethods);
+
+	    return $contactmethods;
+}
+
+
 
 
 }
