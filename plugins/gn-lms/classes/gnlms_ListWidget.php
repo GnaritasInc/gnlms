@@ -310,7 +310,8 @@ function super ($methodName) {
 				$output = $this->outputTreeViewList($atts, "admin-course-list.php");
 				break;
 			case "user_current_courses":
-				$output = $this->outputTreeViewList($atts, "user-current-courses.php");
+				// $output = $this->outputTreeViewList($atts, "user-current-courses.php");
+				$output = $this->doCustomList("user-current-courses", $atts);
 				break;
 			case "user_available_courses":
 				$output = $this->doCustomList("user-available-courses", $atts);
