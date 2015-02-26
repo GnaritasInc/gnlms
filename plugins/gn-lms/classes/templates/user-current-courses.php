@@ -19,7 +19,7 @@ $courses = $records;
 	</li>
 <?php endforeach; ?>
 </ul>
-<div title='Course Monitor' id='gnlms-course-monitor'></div>
+<?php include("_course_monitor.php"); ?>
 <?php else: ?>
 <p>No courses found. <a href="<?php echo get_permalink(get_page_by_title('Courses')); ?>">Browse available courses.</a></p>
 <?php endif; ?>
