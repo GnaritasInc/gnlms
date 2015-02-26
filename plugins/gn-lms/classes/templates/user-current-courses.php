@@ -1,6 +1,9 @@
 <?php 
-global $gnlms; 
+global $gnlms;
+$courses = $records;
 ?>
+
+<?php if(count($courses)): ?>
 <ul class="gnlms-treeview">
 <?php foreach($courses as $course): $courseLaunchURL = $gnlms->getCourseLaunchURL($course->id); ?>
 	<?php if($course->expired): ?>
@@ -16,4 +19,7 @@ global $gnlms;
 	</li>
 <?php endforeach; ?>
 </ul>
-<div title='Course Monitor' id='gnlms-course-monitor'></div>
+<?php include("_course_monitor.php"); ?>
+<?php else: ?>
+<p>No courses found. <a href="<?php echo get_permalink(get_page_by_title('Courses')); ?>">Browse available courses.</a></p>
+<?php endif; ?>

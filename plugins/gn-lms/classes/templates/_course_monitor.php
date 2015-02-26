@@ -1,0 +1,1 @@
+<div title='Course Monitor' id='gnlms-course-monitor'></div>
