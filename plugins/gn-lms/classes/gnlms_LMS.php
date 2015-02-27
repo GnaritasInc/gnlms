@@ -95,6 +95,10 @@ class gnlms_LMS extends gn_WebInterface {
 
 		add_action('signup_extra_fields',array(&$this, 'ms_registrationAddFields'));
 		add_filter('wpmu_validate_user_signup',array(&$this, 'ms_registrationCheckFields'),10,3);
+
+		add_filter('add_signup_meta',array(&$this, 'ms_add_signup_meta'),10,3);
+
+
 		//add_action('user_register', array(&$this, 'registrationDbInsertFields'));
 
 		add_action('wpmu_activate_user','ms_registrationDbInsertFields',10,3);
@@ -1205,13 +1209,26 @@ function ms_registrationAddFields ($errors) {
 
 	}
 
+function ms_add_signup_meta ($meta) {
+
+	$meta["add_to_blog"] =1;
+	$meta["new_role"]="lms_user";
+
+	$meta = array_merge($meta, $_POST);
+
+	return ($meta);
+}
+
 function ms_registrationDbInsertFields($user_id){
 	// ****** Problems
 	//User data is no longer in the post
 	// Need to get from ?somewhere
 	// Need to put the data in ?somewhere to begin with
 
-	registrationDbInsertFields($user_id);
+	$data = get_userdata($user_id);
+	$_POST = merge_array($_POST,$data);
+
+	$this->registrationDbInsertFields($user_id);
 }
 
 function registrationDbInsertFields($user_id) {
@@ -1244,7 +1261,7 @@ function registrationDbInsertFields($user_id) {
 			return null;
 		}
 	}
-	
+
 	function assignUserCourses ($user_id) {
 		if($code = $_POST['registration_code']) {
 			foreach($this->data->retrieveSubscriptionCodeCourses($code) as $course) {
