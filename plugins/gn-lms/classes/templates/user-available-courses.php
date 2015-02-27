@@ -8,7 +8,7 @@
 <?php foreach($records as $course): 
 	if($course->course_status) {
 		$status = $course->course_status;
-		if ($status != 'Inactive') {
+		if (!in_array($status, array('Inactive', 'Expired'))) {
 			$courseLaunchURL = $gnlms->getCourseLaunchURL($course->id);
 			$status = "<a class='gnlms-course-launch' href='$courseLaunchURL'>Launch</a>";
 		}
