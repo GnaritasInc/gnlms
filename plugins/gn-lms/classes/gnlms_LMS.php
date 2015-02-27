@@ -1175,6 +1175,17 @@ function registrationDbInsertFields($user_id) {
 	}
 
 
+	function calcUserCourseExpirationDate ($user_id, $course_id) {
+		$scc = $this->data->getUserSubscriptionCodeCourse($user_id, $course_id);
+		if ($scc && $scc->subscription_period_number && $scc->subscription_period_interval) {
+			$interval = "+".$scc->subscription_period_number." ".$scc->subscription_period_interval;
+			return date('Y-m-d', strtotime($interval));
+		}
+		else {
+			return null;
+		}
+	}
+	
 	function assignUserCourses ($user_id) {
 		if($code = $_POST['registration_code']) {
 			foreach($this->data->retrieveSubscriptionCodeCourses($code) as $course) {

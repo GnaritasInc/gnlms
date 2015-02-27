@@ -414,6 +414,17 @@ class gnlms_Data extends gn_PluginDB {
 
 		return $this->db->get_results($sql);
 	}
+	
+	function getUserSubscriptionCodeCourse ($userID, $courseID) {
+		$sql = "select scc.*";
+		$sql .= " from #subscription_code_course# scc inner join #user# u on u.subscription_code_id=scc.subscription_code_id";
+		$sql .= " where u.id=%d and scc.course_id=%d";
+		
+		$sql = $this->replaceTableRefs($sql);
+		$sql = $this->db->prepare($sql, $userID, $courseID);
+		
+		return $this->db->get_row($sql);
+	}
 
 
 	function assignCourseUsers ($courseID, $userIDs) {
