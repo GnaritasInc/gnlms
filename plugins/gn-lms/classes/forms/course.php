@@ -4,7 +4,8 @@
 	$action = $isSelected ? "gnlms_shopping_cart_remove" : "gnlms_shopping_cart_add";
 	$actionText = $isSelected ? "Remove" : "Add to Shopping Cart";
 	$id = $context['id'];
-	$registration = $this->retrieveRegistration(get_current_user_id(), $id);
+	$userID = get_current_user_id();
+	$registration = $this->retrieveRegistration($userID, $id);
 	
 	$msg = "";
 	if (strlen(trim($_GET['msg']))) {
@@ -18,18 +19,21 @@
 		switch($registration->course_status) {
 			case "Registered":
 			case "In Progress":
-				$statusText = "You registered for this course on ".date('F n, Y', strtotime($registration->registration_date)).'. <a class="gnlms-course-launch" href="'.$this->getCourseLaunchURL($id).'">Launch course</a>';
+				$statusText = "You registered for this course on ".date('F j, Y', strtotime($registration->registration_date)).'. <a class="gnlms-course-launch gnlms-button" href="'.$this->getCourseLaunchURL($id).'">Launch course</a>';
 				break;
 			case "Expired":
-				$statusText = "Your registration for this course expired on ".date('F n, Y', strtotime($registration->expiration_date)).".";
+				$statusText = "Your registration for this course expired on ".date('F j, Y', strtotime($registration->expiration_date)).".";
 				break;
 			case "Completed":
-				$statusText = "You completed this course on ".date('F n, Y', strtotime($registration->course_completion_date)).".";
+				$statusText = "You completed this course on ".date('F j, Y', strtotime($registration->course_completion_date)).".";
 				break;
 		}
 	}
 	else {
 		$statusText = "This course is currently ".($isSelected ? "in your shopping cart." : "available.");
+		ob_start();
+		include("_shopping_cart_update.php");
+		$actionButton = apply_filters("gnlms_available_course_action_button", ob_get_clean(), $id, $userID);
 	}
 ?>
 
@@ -39,7 +43,7 @@
 <p><?php echo htmlspecialchars(trim($context['description'])); ?></p>
 <div class="gnlms-course-status">
 <?php if($msg): ?><p class="gnlms-msg"><?php echo htmlspecialchars($msg); ?></p><?php endif; ?>
-<?php echo $statusText; ?> <?php if(!$registration) include("_shopping_cart_update.php"); ?>
+<?php echo $statusText; ?> <?php if(!$registration) echo $actionButton; ?>
 </div>
 </div>
 

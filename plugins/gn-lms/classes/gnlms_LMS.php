@@ -1244,7 +1244,7 @@ function registrationDbInsertFields($user_id) {
 			return null;
 		}
 	}
-
+	
 	function assignUserCourses ($user_id) {
 		if($code = $_POST['registration_code']) {
 			foreach($this->data->retrieveSubscriptionCodeCourses($code) as $course) {
