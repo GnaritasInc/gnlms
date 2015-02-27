@@ -19,13 +19,13 @@
 		switch($registration->course_status) {
 			case "Registered":
 			case "In Progress":
-				$statusText = "You registered for this course on ".date('F n, Y', strtotime($registration->registration_date)).'. <a class="gnlms-course-launch gnlms-button" href="'.$this->getCourseLaunchURL($id).'">Launch course</a>';
+				$statusText = "You registered for this course on ".date('F j, Y', strtotime($registration->registration_date)).'. <a class="gnlms-course-launch gnlms-button" href="'.$this->getCourseLaunchURL($id).'">Launch course</a>';
 				break;
 			case "Expired":
-				$statusText = "Your registration for this course expired on ".date('F n, Y', strtotime($registration->expiration_date)).".";
+				$statusText = "Your registration for this course expired on ".date('F j, Y', strtotime($registration->expiration_date)).".";
 				break;
 			case "Completed":
-				$statusText = "You completed this course on ".date('F n, Y', strtotime($registration->course_completion_date)).".";
+				$statusText = "You completed this course on ".date('F j, Y', strtotime($registration->course_completion_date)).".";
 				break;
 		}
 	}
