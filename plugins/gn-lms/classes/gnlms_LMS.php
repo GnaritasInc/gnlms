@@ -91,7 +91,17 @@ class gnlms_LMS extends gn_WebInterface {
 		add_action('user_register', array(&$this, 'registrationDbInsertFields'));
 
 
-		add_action('signup_extra_fields',array(&$this, 'registrationAddFields'));
+		// Multisite
+
+		add_action('signup_extra_fields',array(&$this, 'ms_registrationAddFields'));
+		add_filter('wpmu_validate_user_signup',array(&$this, 'ms_registrationCheckFields'),10,3);
+		//add_action('user_register', array(&$this, 'registrationDbInsertFields'));
+
+		add_action('wpmu_activate_user','ms_registrationDbInsertFields',10,3);
+
+
+		//add_action('before_signup_form',array(&$this, 'before_signup_form'));
+
 
 
 
@@ -1100,6 +1110,10 @@ class gnlms_LMS extends gn_WebInterface {
 
 	}
 
+function ms_registrationAddFields ($errors) {
+	$this->before_signup_form( $errors );
+	$this->registrationAddFields();
+}
 
 	function registrationAddFields () {
 		error_log("Showing Registration");
@@ -1113,12 +1127,46 @@ class gnlms_LMS extends gn_WebInterface {
 	}
 
 	function showCustomProfileFields ($user) {
-		$checked = $user && get_user_meta ($user->ID, "gnlms_test", true) ? " checked='checked'" : "";
-		echo("<label><input type='checkbox' name='test' value='1' $checked /> Test account</label>");
+
+
+		$lmsusermeta = $user->ID ? $this->data->fetchObject("user", $user->ID) : array();
+
+		$context =$lmsusermeta;
+		$context["_is_registration"] = false;
+		$context["_is_profile"] = true;
+		//$context["user_email"] = $context["email"];
+
+
+		ob_start();
+		$this->displayTemplate("forms/_user_fields.php", $context);
+		echo( ob_get_clean());
+
+		if ( current_user_can( 'manage_options' ) ) {
+			$checked = $user && get_user_meta ($user->ID, "gnlms_test", true) ? " checked='checked'" : "";
+			echo("<label><input type='checkbox' name='test' value='1' $checked /> Test account</label>");
+		}
 	}
 
 	function saveCustomProfileFields ($user_id) {
-		update_user_meta ($user_id, "gnlms_test", (strlen(trim($_POST['test'])) ? 1 : 0));
+		if ( current_user_can( 'manage_options' ) ) {
+			update_user_meta ($user_id, "gnlms_test", (strlen(trim($_POST['test'])) ? 1 : 0));
+		}
+	}
+
+	function ms_registrationCheckFields ( $result) {
+
+	$user_name = $result['user_name'];
+	$user_email = $result['user_email'];
+	$errors = $result['errors'];
+
+	$errors =$this->registrationCheckFields ($user_email, $user_email, $errors);
+
+	$result['errors'] = $errors;
+
+	//$this->var_error_log($errors);
+
+	return($result);
+
 	}
 
 	function registrationCheckFields ($login, $email, $errors) {
@@ -1153,10 +1201,21 @@ class gnlms_LMS extends gn_WebInterface {
 			$lastname = $_POST['last_name'];
 		}
 
+		return ($errors);
+
 	}
 
+function ms_registrationDbInsertFields($user_id){
+	// ****** Problems
+	//User data is no longer in the post
+	// Need to get from ?somewhere
+	// Need to put the data in ?somewhere to begin with
+
+	registrationDbInsertFields($user_id);
+}
+
 function registrationDbInsertFields($user_id) {
-		// error_log("Doing DB Update");
+	   error_log("Doing DB Update for user Registration");
 
 		$this->addLMSUser($user_id);
 
@@ -1170,10 +1229,21 @@ function registrationDbInsertFields($user_id) {
 		$doRedirect = trim($_POST['_redirect']) ? true : false;
 
 		$this->defaultUpdateEdit ("user", $doRedirect);
-		// error_log("Finished DB Update");
+		 error_log("Finished DB Update");
 
 	}
 
+
+	function calcUserCourseExpirationDate ($user_id, $course_id) {
+		$scc = $this->data->getUserSubscriptionCodeCourse($user_id, $course_id);
+		if ($scc && $scc->subscription_period_number && $scc->subscription_period_interval) {
+			$interval = "+".$scc->subscription_period_number." ".$scc->subscription_period_interval;
+			return date('Y-m-d', strtotime($interval));
+		}
+		else {
+			return null;
+		}
+	}
 
 	function assignUserCourses ($user_id) {
 		if($code = $_POST['registration_code']) {
@@ -1188,6 +1258,46 @@ function registrationDbInsertFields($user_id) {
 			}
 		}
 	}
+
+
+function before_signup_form( $wp_error ) {
+
+	if ( $wp_error->get_error_code() ) {
+		$errors = '';
+		$messages = '';
+		foreach ( $wp_error->get_error_codes() as $code ) {
+			$severity = $wp_error->get_error_data( $code );
+			foreach ( $wp_error->get_error_messages( $code ) as $error_message ) {
+				if ($code!="user_name" && $code !="user_email") {
+				if ( 'message' == $severity )
+					$messages .= '	' . $error_message . "<br />\n";
+				else
+					$errors .= '	'. $error_message . "<br />\n";
+				}
+			}
+		}
+		if ( ! empty( $errors ) ) {
+			/**
+			 * Filter the error messages displayed above the login form.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param string $errors Login error message.
+			 */
+			echo '<div id="login_error" class="error">' . apply_filters( 'login_errors', $errors ) . "</div>\n";
+		}
+		if ( ! empty( $messages ) ) {
+			/**
+			 * Filter instructional messages displayed above the login form.
+			 *
+			 * @since 2.5.0
+			 *
+			 * @param string $messages Login messages.
+			 */
+			echo '<p class="message">' . apply_filters( 'login_messages', $messages ) . "</p>\n";
+		}
+	}
+}
 
 
 // End Registration

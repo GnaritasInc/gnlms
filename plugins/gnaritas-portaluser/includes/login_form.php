@@ -1,4 +1,5 @@
 <?php if (!(current_user_can('level_0'))){ ?>
+<div id="gn-login-form">
 <h2>Login</h2>
 <div class="padding">
 <form id="login-form" action="<?php echo get_option('home'); ?>/user-account/" method="post">
@@ -17,10 +18,10 @@
 
 <ul style="margin-top:5px; margin-bottom:5px">
 <li>
-<a href="<?php echo get_option('home'); ?>/wp-register.php">Register</a><span style="width:40px"></span>
+<a href="<?php echo wp_registration_url();?>">Register</a><span style="width:40px"></span>
 </li>
 <li>
-<a href="<?php echo get_option('home'); ?>/wp-login.php?action=lostpassword">Recover password</a>
+<a href="<?php echo wp_lostpassword_url( $redirect );?>">Recover password</a>
 </li>
 </ul>
 <?php } else { ?>
@@ -30,5 +31,6 @@
         </ul>
 	-->
 
+</div>
 </div>
 <?php }?>
