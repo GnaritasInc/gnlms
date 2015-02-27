@@ -101,7 +101,7 @@ class gnlms_LMS extends gn_WebInterface {
 
 		//add_action('user_register', array(&$this, 'registrationDbInsertFields'));
 
-		add_action('wpmu_activate_user','ms_registrationDbInsertFields',10,3);
+		add_action('wpmu_activate_user',array(&$this, 'ms_registrationDbInsertFields'),10,3);
 
 
 		//add_action('before_signup_form',array(&$this, 'before_signup_form'));
@@ -1219,16 +1219,26 @@ function ms_add_signup_meta ($meta) {
 	return ($meta);
 }
 
-function ms_registrationDbInsertFields($user_id){
+function ms_registrationDbInsertFields($user_id, $password, $meta){
 	// ****** Problems
 	//User data is no longer in the post
 	// Need to get from ?somewhere
 	// Need to put the data in ?somewhere to begin with
 
-	$data = get_userdata($user_id);
-	$_POST = merge_array($_POST,$data);
+	   error_log("Doing MS Activation DB Update for user Registration");
+
+	$data = $meta;
+
+	$this->var_error_log($meta);
+
+	$_POST = array_merge($_POST,$data);
+
+	$this->var_error_log($_POST);
 
 	$this->registrationDbInsertFields($user_id);
+
+	error_log("Finished  MS Activation DB Update for user Registration");
+
 }
 
 function registrationDbInsertFields($user_id) {
