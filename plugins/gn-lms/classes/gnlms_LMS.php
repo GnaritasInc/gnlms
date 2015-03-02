@@ -119,7 +119,7 @@ class gnlms_LMS extends gn_WebInterface {
 
 		// Page access
 
-		//add_action("template_redirect", array(&$this, "checkPageAccess"));
+		add_action("template_redirect", array(&$this, "checkPageAccess"));
 
 
 		/* End New */
@@ -281,10 +281,11 @@ class gnlms_LMS extends gn_WebInterface {
 			$this->data->addLMSUser($user);
 		}
 
+		do_action("gnlms_addLMSUser", $user_id, $_POST );
 
 	}
 
-	function updateLMSUser ($user_id, $old_data) {
+	function updateLMSUser ($user_id) { //, $old_data) {
 		$user = get_userdata($user_id);
 		if($this->user_in_role("lms_user", $user)) {
 			$this->data->updateLMSUser($user);
@@ -494,6 +495,65 @@ class gnlms_LMS extends gn_WebInterface {
 		}
 
 		return false;
+	}
+
+		function verifyUserRole ($role="lms_admin") {
+			return ($this->user_in_role("administrator") || $this->user_in_role($role));
+		}
+
+		function check_auth_blog_member()
+		{
+			if (  (!is_front_page()
+				  &&(strpos($_SERVER['REQUEST_URI'], '/user-account/')!==0)
+				  &&(strpos($_SERVER['REQUEST_URI'], '/register/')!==0)
+				  &&(strpos($_SERVER['REQUEST_URI'], '/login/')!==0)
+				  && (strpos($_SERVER['REQUEST_URI'], '/lostpassword/')!==0)
+				  && (strpos($_SERVER['REQUEST_URI'], '/resetpass/')!==0)
+				  && $_SERVER['PHP_SELF'] != '/wp-login.php')
+				  && ( !is_user_logged_in() || !is_user_member_of_blog() ) ) {
+
+			auth_redirect();
+			}
+
+		}
+
+
+		function checkPageAccess () {
+			global $post;
+			// $role = get_post_meta($post->ID, "gnlms_role", true);
+
+			$role = $this->getPageRole($post->ID);
+
+			$this->check_auth_blog_member();
+
+			 if($role && !$this->verifyUserRole($role)) {
+				error_log("User attempted access of denied page:");
+				header("HTTP/1.0 404 Not Found");
+				include( get_404_template() );
+				exit();
+			}
+		}
+
+		function getPageRole ($pageID) {
+			//error_log("gnlms_LMS->getPageRole($pageID)");
+			$role = get_post_meta($pageID, "gnlms_role", true);
+
+			if($role) {
+				//error_log("Role found: '$role'");
+				return $role;
+			}
+			else {
+				$post = get_post($pageID);
+				//error_log("Parent page is ".$post->post_parent);
+				if($post->post_parent) {
+					//error_log("Checking parent...");
+					return $this->getPageRole($post->post_parent);
+				}
+				else {
+					//error_log("Top-level page.");
+					return null;
+				}
+			}
 	}
 
 	function ajaxSuccess ($data=array()) {
@@ -1227,13 +1287,7 @@ function ms_registrationDbInsertFields($user_id, $password, $meta){
 
 	   error_log("Doing MS Activation DB Update for user Registration");
 
-	$data = $meta;
-
-	$this->var_error_log($meta);
-
-	$_POST = array_merge($_POST,$data);
-
-	$this->var_error_log($_POST);
+	$_POST = array_merge($_POST,$meta);
 
 	$this->registrationDbInsertFields($user_id);
 
@@ -1242,6 +1296,8 @@ function ms_registrationDbInsertFields($user_id, $password, $meta){
 }
 
 function registrationDbInsertFields($user_id) {
+
+		// Depending on the $_POST here is probably bad
 	   error_log("Doing DB Update for user Registration");
 
 		$this->addLMSUser($user_id);
@@ -1256,7 +1312,7 @@ function registrationDbInsertFields($user_id) {
 		$doRedirect = trim($_POST['_redirect']) ? true : false;
 
 		$this->defaultUpdateEdit ("user", $doRedirect);
-		 error_log("Finished DB Update");
+		error_log("Finished DB Update");
 
 	}
 
