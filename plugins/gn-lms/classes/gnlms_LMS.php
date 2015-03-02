@@ -285,7 +285,7 @@ class gnlms_LMS extends gn_WebInterface {
 
 	}
 
-	function updateLMSUser ($user_id, $old_data) {
+	function updateLMSUser ($user_id) { //, $old_data) {
 		$user = get_userdata($user_id);
 		if($this->user_in_role("lms_user", $user)) {
 			$this->data->updateLMSUser($user);
@@ -1287,13 +1287,7 @@ function ms_registrationDbInsertFields($user_id, $password, $meta){
 
 	   error_log("Doing MS Activation DB Update for user Registration");
 
-	$data = $meta;
-
-	$this->var_error_log($meta);
-
-	$_POST = array_merge($_POST,$data);
-
-	$this->var_error_log($_POST);
+	$_POST = array_merge($_POST,$meta);
 
 	$this->registrationDbInsertFields($user_id);
 
