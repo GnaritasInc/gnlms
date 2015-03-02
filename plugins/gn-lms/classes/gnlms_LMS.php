@@ -281,6 +281,7 @@ class gnlms_LMS extends gn_WebInterface {
 			$this->data->addLMSUser($user);
 		}
 
+		do_action("gnlms_addLMSUser", $user_id, $_POST); ?>
 
 	}
 
@@ -1242,6 +1243,8 @@ function ms_registrationDbInsertFields($user_id, $password, $meta){
 }
 
 function registrationDbInsertFields($user_id) {
+
+		// Depending on the $_POST here is probably bad
 	   error_log("Doing DB Update for user Registration");
 
 		$this->addLMSUser($user_id);
@@ -1256,7 +1259,7 @@ function registrationDbInsertFields($user_id) {
 		$doRedirect = trim($_POST['_redirect']) ? true : false;
 
 		$this->defaultUpdateEdit ("user", $doRedirect);
-		 error_log("Finished DB Update");
+		error_log("Finished DB Update");
 
 	}
 
