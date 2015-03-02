@@ -62,9 +62,20 @@ jQuery(document).ready(function ($) {
 		});
 	});
 
-	$("#gnlms-sc-dialog").dialog("option", {"buttons":{"OK": function () { $(this).dialog("close"); }}});
+	$("#gnlms-sc-dialog").dialog("option", {
+		"buttons":{
+			"Close": function () { $(this).dialog("close"); },
+			"Checkout": function () { location.href="/checkout/"; }
+		}
+	});
+	
+	function setCheckoutButtonState () {
+		$("button:contains('Checkout')", $("#gnlms-sc-dialog").parents(".ui-dialog")).button("option", "disabled", $("#gnlms-sc-dialog .gnlms-shopping-cart").length ? false : true);
+	}
+	
+	setCheckoutButtonState();
 
-	$("#gnlms-sc-dialog form.shopping_cart_update").submit(function (e) {
+	$("#gnlms-sc-dialog").on("submit",  "form.shopping_cart_update", function (e) {
 		e.preventDefault();
 		ajaxFormSubmit.call(this, function (data, textStatus, xhr) {
 			if(data.status != "OK") {
@@ -72,6 +83,7 @@ jQuery(document).ready(function ($) {
 			}
 			else {
 				$(".gnlms-shopping-cart-content", $("#gnlms-sc-dialog")).replaceWith(data.html);
+				setCheckoutButtonState();
 				$("#gnlms-sc-dialog").on("dialogclose", function () {
 					var params = getParams();
 					if ("msg" in params) {
