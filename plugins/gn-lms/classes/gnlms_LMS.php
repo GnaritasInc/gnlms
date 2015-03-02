@@ -119,7 +119,7 @@ class gnlms_LMS extends gn_WebInterface {
 
 		// Page access
 
-		//add_action("template_redirect", array(&$this, "checkPageAccess"));
+		add_action("template_redirect", array(&$this, "checkPageAccess"));
 
 
 		/* End New */
@@ -281,7 +281,7 @@ class gnlms_LMS extends gn_WebInterface {
 			$this->data->addLMSUser($user);
 		}
 
-		do_action("gnlms_addLMSUser", $user_id, $_POST); ?>
+		do_action("gnlms_addLMSUser", $user_id, $_POST );
 
 	}
 
@@ -495,6 +495,64 @@ class gnlms_LMS extends gn_WebInterface {
 		}
 
 		return false;
+	}
+
+		function verifyUserRole ($role="lms_admin") {
+			return ($this->user_in_role("administrator") || $this->user_in_role($role));
+		}
+
+		function check_auth_blog_member()
+		{
+			if (  (!is_front_page()
+				  &&(strpos($_SERVER['REQUEST_URI'], '/user-account/')!==0)
+				  && $_SERVER['PHP_SELF'] != '/wp-login.php')
+				  &&(strpos($_SERVER['REQUEST_URI'], '/login/')!==0)
+				  && (strpos($_SERVER['REQUEST_URI'], '/lostpassword/')!==0)
+				  && (strpos($_SERVER['REQUEST_URI'], '/resetpass/')!==0)
+				  && ( !is_user_logged_in() || !is_user_member_of_blog() ) ) {
+
+			auth_redirect();
+			}
+
+		}
+
+
+		function checkPageAccess () {
+			global $post;
+			// $role = get_post_meta($post->ID, "gnlms_role", true);
+
+			$role = $this->getPageRole($post->ID);
+
+			$this->check_auth_blog_member();
+
+			 if($role && !$this->verifyUserRole($role)) {
+				error_log("User attempted access of denied page:");
+				header("HTTP/1.0 404 Not Found");
+				include( get_404_template() );
+				exit();
+			}
+		}
+
+		function getPageRole ($pageID) {
+			//error_log("gnlms_LMS->getPageRole($pageID)");
+			$role = get_post_meta($pageID, "gnlms_role", true);
+
+			if($role) {
+				//error_log("Role found: '$role'");
+				return $role;
+			}
+			else {
+				$post = get_post($pageID);
+				//error_log("Parent page is ".$post->post_parent);
+				if($post->post_parent) {
+					//error_log("Checking parent...");
+					return $this->getPageRole($post->post_parent);
+				}
+				else {
+					//error_log("Top-level page.");
+					return null;
+				}
+			}
 	}
 
 	function ajaxSuccess ($data=array()) {
