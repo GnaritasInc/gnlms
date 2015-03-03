@@ -413,12 +413,12 @@ class gnlms_LMS extends gn_WebInterface {
 		if(!$msg = $this->validateShoppingCart()) {
 			if ($action == "gnlms_shopping_cart_add") {
 				$this->addSelectedCourse($courseID);
-				$msg="Course added.";
+				$msg="Course added to cart.";
 
 			}
 			else if ($action == "gnlms_shopping_cart_remove") {
 				$this->removeSelectedCourse($courseID);
-				$msg="Course removed.";
+				$msg="Course removed from cart.";
 			}
 		}
 		else {
