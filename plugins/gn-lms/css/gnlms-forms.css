@@ -99,3 +99,11 @@ input {
 	border: 2px inset #ccc;
 }
 */
+
+div.entry a.gnlms-button:link, div.entry a.gnlms-button:visited {
+	color: rgb(69,69,69);
+}
+
+input.gnlms-button.ui-button {
+	padding: 4px;
+}

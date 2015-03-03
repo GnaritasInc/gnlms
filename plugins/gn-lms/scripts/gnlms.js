@@ -146,7 +146,7 @@ jQuery(document).ready(function ($) {
 		});
 	});
 
-	$("a.gnlms-button").button();
+	$(".gnlms-button").button();
 
 	$("a.gnlms-open-dialog-form").click(function (event) {
 		var dialogSelector = "#"+$(this).attr("data-dialogid");
