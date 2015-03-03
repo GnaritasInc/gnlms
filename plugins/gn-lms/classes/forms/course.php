@@ -33,7 +33,8 @@
 		$statusText = "This course is currently ".($isSelected ? "in your shopping cart." : "available.");
 		ob_start();
 		include("_shopping_cart_update.php");
-		$actionButton = apply_filters("gnlms_available_course_action_button", ob_get_clean(), $id, $userID);
+		$filter = $isSelected ? "gnlms_selected_course_action_button" : "gnlms_available_course_action_button";
+		$actionButton = apply_filters($filter, ob_get_clean(), $id, $userID);
 	}
 ?>
 
