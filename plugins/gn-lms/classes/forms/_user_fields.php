@@ -1,5 +1,5 @@
+<?php if($context["_is_profile"]): ?><h2>My Profile</h2><?php endif; ?>
 
-<hr width="50%" align="center"/>
 <div id="gnLMSUser">
 <?php
 
