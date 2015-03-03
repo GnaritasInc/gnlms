@@ -21,5 +21,5 @@ $courses = $records;
 </ul>
 <?php include("_course_monitor.php"); ?>
 <?php else: ?>
-<p>No courses found. <a href="<?php echo get_permalink(get_page_by_title('Courses')); ?>">Browse available courses.</a></p>
+<p>No courses found. <a href="<?php echo get_permalink(get_page_by_title('Courses')); ?>">Browse courses.</a></p>
 <?php endif; ?>
