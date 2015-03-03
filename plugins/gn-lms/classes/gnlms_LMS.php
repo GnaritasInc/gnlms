@@ -1153,17 +1153,17 @@ class gnlms_LMS extends gn_WebInterface {
 		$todays_date = date("Y-m-d");
 		$today = strtotime($todays_date);
 
-		$expiration_date = strtotime($codeData->expiration_date);
+		$expiration_date = $codeData->expiration_date;
 
 
 		if ($codeData->record_status!=1) {
 			return (false);
 		}
-		else if ($expiration_date<$today) {
+		else if ($expiration_date && strtotime($expiration_date) < $today) {
 			return (false);
 		}
 
-		else if ($this->data->retrieveSubscriptionCount($codeData->id) >= $codeData->user_limit) {
+		else if ($codeData->user_limit && $this->data->retrieveSubscriptionCount($codeData->id) >= $codeData->user_limit) {
 			return (false);
 		}
 		else {
