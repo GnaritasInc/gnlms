@@ -1,10 +1,16 @@
 <?php
-/*
-Plugin Name: Custom User Links
-Description: Enabling this module will initialize custom user links. You will then have to configure the settings via the "User Links" tab.
-*/
+/**
+ * Plugin Name: Custom User Links
+ * Description: Enabling this module will initialize custom user links. You will then have to configure the settings via the "User Links" tab.
+ *
+ * Holds Theme My Login Custom User Links class
+ *
+ * @package Theme_My_Login
+ * @subpackage Theme_My_Login_Custom_User_Links
+ * @since 6.0
+ */
 
-if ( !class_exists( 'Theme_My_Login_Custom_User_Links' ) ) :
+if ( ! class_exists( 'Theme_My_Login_Custom_User_Links' ) ) :
 /**
  * Theme My Login Custom User Links module class
  *
@@ -12,7 +18,69 @@ if ( !class_exists( 'Theme_My_Login_Custom_User_Links' ) ) :
  *
  * @since 6.0
  */
-class Theme_My_Login_Custom_User_Links extends Theme_My_Login_Module {
+class Theme_My_Login_Custom_User_Links extends Theme_My_Login_Abstract {
+	/**
+	 * Holds options key
+	 *
+	 * @since 6.3
+	 * @access protected
+	 * @var string
+	 */
+	protected $options_key = 'theme_my_login_user_links';
+
+	/**
+	 * Returns singleton instance
+	 *
+	 * @since 6.3
+	 * @access public
+	 * @return object
+	 */
+	public static function get_object( $class = null ) {
+		return parent::get_object( __CLASS__ );
+	}
+
+	/**
+	 * Returns default options
+	 *
+	 * @since 6.3
+	 * @access public
+	 *
+	 * @return array Default options
+	 */
+	public static function default_options() {
+		global $wp_roles;
+
+		if ( empty( $wp_roles ) )
+			$wp_roles = new WP_Roles;
+
+		$options = array();
+		foreach ( $wp_roles->get_names() as $role => $role_name ) {
+			if ( 'pending' != $role ) {
+				$options[$role] = array(
+					array(
+						'title' => __( 'Dashboard' ),
+						'url'   => admin_url()
+					),
+					array(
+						'title' => __( 'Profile' ),
+						'url'   => admin_url( 'profile.php' )
+					)
+				);
+			}
+		}
+		return $options;
+	}
+
+	/**
+	 * Loads the module
+	 *
+	 * @since 6.0
+	 * @access protected
+	 */
+	protected function load() {
+		add_filter( 'tml_user_links', array( &$this, 'get_user_links' ) );
+	}
+
 	/**
 	 * Gets the user links for the current user's role
 	 *
@@ -25,92 +93,38 @@ class Theme_My_Login_Custom_User_Links extends Theme_My_Login_Module {
 	 * @param array $links Default user links
 	 * @return array New user links
 	 */
-	function get_user_links( $links = array() ) {
-		global $theme_my_login;
-
-		if ( !is_user_logged_in() )
+	public function get_user_links( $links = array() ) {
+		if ( ! is_user_logged_in() )
 			return $links;
 
 		$current_user = wp_get_current_user();
-		if ( is_multisite() && empty( $current_user->roles ) ) {
+		if ( is_multisite() && empty( $current_user->roles ) )
 			$current_user->roles = array( 'subscriber' );
-		}
 
 		foreach( (array) $current_user->roles as $role ) {
-			if ( false !== $theme_my_login->options->get_option( array( 'user_links', $role ) ) ) {
-				$links = $theme_my_login->options->get_option( array( 'user_links', $role ) );
+			if ( $links = $this->get_option( $role ) );
 				break;
-			}
 		}
 
 		// Define and allow filtering of replacement variables
 		$replacements = apply_filters( 'tml_custom_user_links_variables', array(
-			'%user_id%' => $current_user->ID,
+			'%user_id%'  => $current_user->ID,
 			'%username%' => $current_user->user_nicename
 		) );
 
 		// Replace variables in link
 		foreach ( (array) $links as $key => $link ) {
-			$links[$key]['url'] = str_replace( array_keys( $replacements ), array_values( $replacements ), $link['url'] );
+			$links[$key]['url'] = Theme_My_Login_Common::replace_vars( $link['url'], $current_user->ID, $replacements );
 		}
 
 		return $links;
 	}
-
-	/**
-	 * Initializes options for this module
-	 *
-	 * Callback for "tml_init_options" hook in method Theme_My_Login::init_options()
-	 *
-	 * @see Theme_My_Login::init_options()
-	 * @since 6.0
-	 * @access public
-	 *
-	 * @param array $options Options passd in from filter
-	 * @return array Original $options array with module options appended
-	 */
-	function init_options( $options = array() ) {
-		global $wp_roles;
-
-		if ( empty( $wp_roles ) )
-			$wp_roles =& new WP_Roles();
-
-		$options = (array) $options;
-
-		$options['user_links'] = array();
-		foreach ( $wp_roles->get_names() as $role => $label ) {
-			if ( 'pending' == $role )
-				continue;
-			$options['user_links'][$role] = array(
-				array( 'title' => __( 'Dashboard', 'theme-my-login' ), 'url' => admin_url() ),
-				array( 'title' => __( 'Profile', 'theme-my-login' ), 'url' => admin_url( 'profile.php' ) )
-			);
-		}
-		return $options;
-	}
-
-	/**
-	 * Loads the module
-	 *
-	 * @since 6.0
-	 * @access public
-	 */
-	function load() {
-		add_filter( 'tml_init_options', array( &$this, 'init_options' ) );
-		add_filter( 'tml_user_links', array( &$this, 'get_user_links' ) );
-	}
 }
 
-/**
- * Holds the reference to Theme_My_Login_Custom_User_Links object
- * @global object $theme_my_login_custom_user_links
- * @since 6.0
- */
-$theme_my_login_custom_user_links = new Theme_My_Login_Custom_User_Links();
+Theme_My_Login_Custom_User_Links::get_object();
+
+endif;
 
 if ( is_admin() )
-	include_once( TML_ABSPATH. '/modules/custom-user-links/admin/custom-user-links-admin.php' );
+	include_once( dirname( __FILE__ ) . '/admin/custom-user-links-admin.php' );
 
-endif; // Class exists
-
-?>

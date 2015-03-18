@@ -1,143 +1,215 @@
 <?php
-
-if ( !class_exists( 'Theme_My_Login_Themed_Profiles_Admin' ) ) :
 /**
- * Theme My Login Themed Profiles module admin class
+ * Holds Theme My Login Themed Profiles Admin class
+ *
+ * @package Theme_My_Login
+ * @subpackage Theme_My_Login_Themed_Profiles
+ * @since 6.2
+ */
+
+if ( ! class_exists( 'Theme_My_Login_Themed_Profiles_Admin' ) ) :
+/**
+ * Theme My Login Themed Profiles Admin class
  *
  * @since 6.2
  */
-class Theme_My_Login_Themed_Profiles_Admin extends Theme_My_Login_Module {
+class Theme_My_Login_Themed_Profiles_Admin extends Theme_My_Login_Abstract {
 	/**
-	 * Adds "Themed Profiles" tab to Theme My Login menu
+	 * Holds options key
 	 *
-	 * Callback for "tml_admin_menu" hook in method Theme_My_Login_Admin::display_settings_page()
-	 *
-	 * @see Theme_My_Login_Admin::display_settings_page(), Theme_My_Login_Admin::add_menu_page, Theme_My_Login_Admin::add_submenu_page()
-	 * @uses Theme_My_Login_Admin::add_menu_page, Theme_My_Login_Admin::add_submenu_page()
-	 * @since 6.2
-	 * @access public
-	 *
-	 * @param object $admin Reference to global $theme_my_login_admin object
+	 * @since 6.3
+	 * @access protected
+	 * @var string
 	 */
-	function admin_menu( &$admin ) {
-		$admin->add_menu_page( __( 'Themed Profiles', 'theme-my-login' ), 'tml-options-themed-profiles', array( &$this, 'display_settings' ) );
-	}
+	protected $options_key = 'theme_my_login_themed_profiles';
 
 	/**
-	 * Outputs themed profiles settings
+	 * Returns singleton instance
 	 *
-	 * Callback for "$hookname" hook in method Theme_My_Login_Admin::add_submenu_page()
-	 *
-	 * @see Theme_My_Login_Admin::add_submenu_page()
-	 * @since 6.2
+	 * @since 6.3
 	 * @access public
+	 * @return object
 	 */
-	function display_settings() {
-		global $theme_my_login, $wp_roles;
-
-		$options = $theme_my_login->options->get_option( array( 'themed_profiles' ), array() );
-		?>
-<table class="form-table">
-    <tr valign="top">
-        <th scope="row"><?php _e( 'Themed Profiles', 'theme-my-login' ); ?></label></th>
-        <td>
-    <?php foreach ( $wp_roles->get_names() as $role => $label ) : if ( 'pending' == $role ) continue; ?>
-            <input name="theme_my_login[themed_profiles][<?php echo $role; ?>][theme_profile]" type="checkbox" id="theme_my_login_themed_profiles_<?php echo $role; ?>_theme_profile" value="1"<?php checked( 1, $options[$role]['theme_profile'] ); ?> />
-            <label for="theme_my_login_themed_profiles_<?php echo $role; ?>_theme_profile"><?php echo $label; ?></label><br />
-    <?php endforeach; ?>
-        </td>
-    </tr>
-    <tr valign="top">
-        <th scope="row"><?php _e( 'Restrict Admin Access', 'theme-my-login' ); ?></label></th>
-        <td>
-    <?php foreach ( $wp_roles->get_names() as $role => $label ) : if ( 'pending' == $role ) continue; ?>
-            <input name="theme_my_login[themed_profiles][<?php echo $role; ?>][restrict_admin]" type="checkbox" id="theme_my_login_themed_profiles_<?php echo $role; ?>_restrict_admin" value="1"<?php checked( 1, $options[$role]['restrict_admin'] ); ?><?php if ( 'administrator' == $role ) echo ' disabled="disabled"'; ?> />
-            <label for="theme_my_login_themed_profiles_<?php echo $role; ?>_restrict_admin"><?php echo $label; ?></label><br />
-    <?php endforeach; ?>
-        </td>
-    </tr>
-</table><?php
-	}
-
-	function display_permalink_settings() {
-		global $theme_my_login;
-		?>
-	<tr valign="top">
-		<th scope="row"><label for="theme_my_login_permalinks_profile"><?php _e( 'Profile', 'theme-my-login' ); ?></label></th>
-		<td>
-			<input name="theme_my_login[permalinks][profile]" type="text" id="theme_my_login_permalinks_profile" value="<?php echo $theme_my_login->options->get_option( array( 'permalinks', 'profile' ) ); ?>" class="regular-text" />
-		</td>
-	</tr><?php
-	}
-
-	/**
-	 * Sanitizes settings
-	 *
-	 * Callback for "tml_save_settings" hook in method Theme_My_Login_Admin::save_settings()
-	 *
-	 * @see Theme_My_Login_Admin::save_settings()
-	 * @since 6.2
-	 * @access public
-	 *
-	 * @param string|array $settings Settings passed in from filter
-	 * @return string|array Sanitized settings
-	 */
-	function save_settings( $settings ) {
-		global $wp_roles;
-
-		if ( did_action( 'tml_activate_themed-profiles/themed-profiles.php' ) )
-			return $settings;
-
-		foreach( $wp_roles->get_names() as $role => $label ) {
-			if ( 'pending' == $role )
-				continue;
-
-			$settings['themed_profiles'][$role] = array(
-				'theme_profile' => (int) isset( $_POST['theme_my_login']['themed_profiles'][$role]['theme_profile'] ),
-				'restrict_admin' => (int) isset( $_POST['theme_my_login']['themed_profiles'][$role]['restrict_admin'] )
-			);
-		}
-		return $settings;
-	}
-
-	/**
-	 * Activates this module
-	 *
-	 * Callback for "tml_activate_themed-profiles/themed-profiles.php" hook in method Theme_My_Login_Admin::activate_module()
-	 *
-	 * @see Theme_My_Login_Admin::activate_module()
-	 * @since 6.2
-	 * @access public
-	 *
-	 * @param object $theme_my_login Reference to global $theme_my_login object
-	 */
-	function activate( &$theme_my_login ) {
-		$options = Theme_My_Login_Themed_Profiles::init_options();
-		$theme_my_login->options->set_option( 'themed_profiles', $options['themed_profiles'] );
+	public static function get_object( $class = null ) {
+		return parent::get_object( __CLASS__ );
 	}
 
 	/**
 	 * Loads the module
 	 *
 	 * @since 6.2
+	 * @access protected
+	 */
+	protected function load() {
+		add_action( 'tml_activate_themed-profiles/themed-profiles.php',  array( &$this, 'activate'  ) );
+		add_action( 'tml_uninstall_themed-profiles/themed-profiles.php', array( &$this, 'uninstall' ) );
+
+		add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+		add_action( 'admin_init', array( &$this, 'admin_init' ) );
+	}
+
+	/**
+	 * Returns default options
+	 *
+	 * @since 6.3
 	 * @access public
 	 */
-	function load() {
-		add_action( 'tml_activate_themed-profiles/themed-profiles.php', array( &$this, 'activate' ) );
-		add_action( 'tml_admin_menu', array( &$this, 'admin_menu' ) );
-		add_filter( 'tml_save_settings', array( &$this, 'save_settings' ) );
+	public static function default_options() {
+		return Theme_My_Login_Themed_Profiles::default_options();
+	}
 
-		add_action( 'tml_settings_permalinks', array( &$this, 'display_permalink_settings' ) );
+	/**
+	 * Activates the module
+	 *
+	 * Callback for "tml_activate_themed-profiles/themed-profiles.php" hook in method Theme_My_Login_Modules_Admin::activate_module()
+	 *
+	 * @see Theme_My_Login_Modules_Admin::activate_module()
+	 * @since 6.0
+	 * @access public
+	 */
+	public function activate() {
+		if ( ! $page_id = Theme_My_Login::get_page_id( 'profile' ) ) {
+			$page_id = wp_insert_post( array(
+				'post_title'     => __( 'Your Profile' ),
+				'post_status'    => 'publish',
+				'post_type'      => 'page',
+				'post_content'   => '[theme-my-login]',
+				'comment_status' => 'closed',
+				'ping_status'    => 'closed'
+			) );
+			update_post_meta( $page_id, '_tml_action', 'profile' );
+		}
+	}
+
+	/**
+	 * Uninstalls the module
+	 *
+	 * Callback for "tml_uninstall_themed-profiles/themed-profiles.php" hook in method Theme_My_Login_Admin::uninstall()
+	 *
+	 * @see Theme_My_Login_Admin::uninstall()
+	 * @since 6.3
+	 * @access public
+	 */
+	public function uninstall() {
+		delete_option( $this->options_key );
+	}
+
+	/**
+	 * Adds "Themed Profiles" tab to Theme My Login menu
+	 *
+	 * Callback for "admin_menu" hook
+	 *
+	 * @since 6.3
+	 * @access public
+	 */
+	public function admin_menu() {
+		add_submenu_page(
+			'theme_my_login',
+			__( 'Theme My Login Themed Profiles Settings', 'theme-my-login' ),
+			__( 'Themed Profiles', 'theme-my-login' ),
+			'manage_options',
+			$this->options_key,
+			array( &$this, 'settings_page' )
+		);
+
+		add_settings_section( 'general', null, '__return_false', $this->options_key );
+
+		add_settings_field( 'themed_profiles', __( 'Themed Profiles',       'theme-my-login' ), array( &$this, 'settings_field_themed_profiles'       ), $this->options_key, 'general' );
+		add_settings_field( 'restrict_admin',  __( 'Restrict Admin Access', 'theme-my-login' ), array( &$this, 'settings_field_restrict_admin_access' ), $this->options_key, 'general' );
+	}
+
+	/**
+	 * Registers options group
+	 *
+	 * Callback for "admin_init" hook
+	 *
+	 * @since 6.3
+	 * @access public
+	 */
+	public function admin_init() {
+		register_setting( $this->options_key, $this->options_key, array( &$this, 'save_settings' ) );
+	}
+
+	/**
+	 * Renders settings page
+	 *
+	 * Callback for add_submenu_page()
+	 *
+	 * @since 6.3
+	 * @access public
+	 */
+	public function settings_page() {
+		Theme_My_Login_Admin::settings_page( array(
+			'title'       => __( 'Theme My Login Themed Profiles Settings', 'theme-my-login' ),
+			'options_key' => $this->options_key
+		) );
+	}
+
+	/**
+	 * Renders Themed Profiles settings field
+	 *
+	 * @since 6.3
+	 * @access public
+	 */
+	public function settings_field_themed_profiles() {
+		global $wp_roles;
+
+		foreach ( $wp_roles->get_names() as $role => $role_name ) {
+			if ( 'pending' == $role )
+				continue;
+			?>
+            <input name="<?php echo $this->options_key; ?>[<?php echo $role; ?>][theme_profile]" type="checkbox" id="<?php echo $this->options_key; ?>_<?php echo $role; ?>_theme_profile" value="1"<?php checked( $this->get_option( array( $role, 'theme_profile' ) ) ); ?> />
+            <label for="<?php echo $this->options_key; ?>_<?php echo $role; ?>_theme_profile"><?php echo $role_name; ?></label><br />
+    		<?php 
+    	}
+	}
+
+	/**
+	 * Renders Restrict Admin Access settings field
+	 *
+	 * @since 6.3
+	 * @access public
+	 */
+	public function settings_field_restrict_admin_access() {
+		global $wp_roles;
+
+		foreach ( $wp_roles->get_names() as $role => $role_name ) {
+			if ( 'pending' == $role )
+				continue;
+			?>
+			<input name="<?php echo $this->options_key; ?>[<?php echo $role; ?>][restrict_admin]" type="checkbox" id="<?php echo $this->options_key; ?>_<?php echo $role; ?>_restrict_admin" value="1"<?php checked( $this->get_option( array( $role, 'restrict_admin' ) ) ); ?><?php if ( 'administrator' == $role ) echo ' disabled="disabled"'; ?> />
+			<label for="<?php echo $this->options_key; ?>_<?php echo $role; ?>_restrict_admin"><?php echo $role_name; ?></label><br />
+			<?php
+		}
+	}
+
+	/**
+	 * Sanitizes settings
+	 *
+	 * Callback for register_setting()
+	 *
+	 * @since 6.2
+	 * @access public
+	 *
+	 * @param array $settings Settings passed in from filter
+	 * @return array Sanitized settings
+	 */
+	public function save_settings( $settings ) {
+		global $wp_roles;
+
+		foreach( $wp_roles->get_names() as $role => $role_name ) {
+			if ( 'pending' != $role ) {
+				$settings[$role] = array(
+					'theme_profile'  => ! empty( $settings[$role]['theme_profile']  ),
+					'restrict_admin' => ! empty( $settings[$role]['restrict_admin'] )
+				);
+			}
+		}
+		return $settings;
 	}
 }
 
-/**
- * Holds the reference to Theme_My_Login_Themed_Profiles_Admin object
- * @global object $theme_my_login_themed_profiles_admin
- * @since 6.2
- */
-$theme_my_login_themed_profiles_admin = new Theme_My_Login_Themed_Profiles_Admin();
+Theme_My_Login_Themed_Profiles_Admin::get_object();
 
-endif; // Class exists
+endif;
 
-?>

@@ -2,8 +2,8 @@
 Contributors: jfarthing84
 Tags: widget, login, registration, theme, custom, log in, register, sidebar, gravatar, redirection, e-mail
 Requires at least: 3.1
-Tested up to: 3.4.2
-Stable tag: 6.2.3
+Tested up to: 3.9.1
+Stable tag: 6.3.10
 
 Themes the WordPress login pages according to your theme.
 
@@ -36,10 +36,81 @@ Also includes a widget for sidebar login.
 
 == Frequently Asked Questions ==
 
+= How do I change the look of forms? =
+
+The same way you would change the look of anything else on your site: CSS. Theme My Login uses it's own very basic stylesheet.
+You can copy this to your theme's directory and add additional styling there or simply add additional styling to your theme's stylesheet.
+
+= I can't get into my site! What do I do? =
+
+Visit yoursite.com/wp-login.php.
+
+= What happened to the language folder? =
+
+As of version 6.3, Theme My Login no longer ships with translation files. Translations will be available at http://downloads.jfarthing.com.
+
+= How do I obtain additional assistance? =
+
 Please visit http://www.jfarthing.com/development/theme-my-login first and then visit http://www.jfarthing.com/support if you have any questions, concerns, suggestions or problems.
 
 
 == Changelog ==
+
+= 6.3.10 =
+* Fix potential local file include vulnerability in templating system
+
+= 6.3.9 =
+* Fix strict standards errors
+* Replace deprecated functions
+
+= 6.3.8 =
+* Fix issue where pages would redirect to profile page with Themed Profiles active
+
+= 6.3.7 =
+* Revert tml_page post type back to default WP pages
+* Fix issue where SSL warnings were displayed in reCAPTCHA module
+* Fix issue where a blank page resulted when 404.php didn't exist in a theme
+* Fix issue where User Links couldn't be deleted
+* Fix issue where "Are you sure?" would display when attempting to log out
+* Fix issue where strings weren't being translated on Profile page
+
+= 6.3.6 =
+* Fix issue where all module options were set once activated
+* Fix issue where template tag was not being output
+* Fix issue where install failed during new blog creation on multisite
+* Fix issue where error messages were duplicated on login pages
+
+= 6.3.5 =
+* Fix issue with blank pages where page.php didn't exist in a theme
+* Fix issue where activating Themed Profiles resulted in a 404 for profile page
+* Fix issue where options were being deleted upon upgrade
+* Fix issue with AJAX module not working properly in Internet Explorer
+
+= 6.3.4 =
+* Use verbose rewrite rules for TML pages
+
+= 6.3.3 =
+* Fix issue where actions weren't being appended to page links
+* Fix issue where modules weren't being installed on upgrade
+* Fix fatal error in Custom E-mail module where old function name wasn't replaced
+* Fix private constructor issue for PHP versions less than 5.3
+
+= 6.3.2 =
+* Fix issue where pages weren't created when upgrading from previous versions
+
+= 6.3.1 =
+* Fix multisite 404 error when using Post Name permalink structure
+* Fix multisite redirect to main site for register
+
+= 6.3 =
+* Introduce tml_page post type and give each action it's own page
+* Introduce AJAX module
+* Implement user lock notifications for the Security module.
+* Add option to hide widget when logged out
+* Add option to disable wp-login.php to Security module
+* Removed languages from plugin
+* Use Custom E-mail's New User template when a user is added via wp-admin
+* Use Custom E-mail's User Activation template when an activation is resent via wp-admin
 
 = 6.2.3 =
 * Fix static front page bug

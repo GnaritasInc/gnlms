@@ -1,196 +1,119 @@
 <?php
-
-if ( !class_exists( 'Theme_My_Login_Custom_User_Links_Admin' ) ) :
 /**
- * Theme My Login Custom User Links module admin class
+ * Holds Theme My Login Custom User Links Admin class
+ *
+ * @package Theme_My_Login
+ * @subpackage Theme_My_Login_Custom_User_Links
+ * @since 6.0
+ */
+
+if ( ! class_exists( 'Theme_My_Login_Custom_User_Links_Admin' ) ) :
+/**
+ * Theme My Login Custom User Links Admin class
  *
  * @since 6.0
  */
-class Theme_My_Login_Custom_User_Links_Admin extends Theme_My_Login_Module {
+class Theme_My_Login_Custom_User_Links_Admin extends Theme_My_Login_Abstract {
 	/**
-	 * AJAX handler for adding/updating a link
+	 * Holds options key
 	 *
-	 * Callback for "wp_ajax_add-user-link" hook in file "wp-admin/admin-ajax.php"
-	 *
-	 * @since 6.0
-	 * @access public
+	 * @since 6.3
+	 * @access protected
+	 * @var string
 	 */
-	function add_user_link_ajax() {
-		global $theme_my_login;
+	protected $options_key = 'theme_my_login_user_links';
 
-		if ( !current_user_can( 'manage_options' ) )
-			die( '-1' );
-
-		check_ajax_referer( 'add-user-link' );
-
-		// Create a reference to current links
-		$links =& $theme_my_login->options->get_option( 'user_links' );
-
-		$c = 0;
-		if ( isset( $_POST['new_user_link'] ) ) {
-			// Add a new link
-			foreach ( $_POST['new_user_link'] as $role => $link ) {
-				// Make sure input isn't empty
-				if ( is_array( $link ) && !empty( $link ) ) {
-					// Clean the input
-					$clean_title = wp_kses( $link['title'], null );
-					$clean_url = wp_kses( $link['url'], null );
-
-					// Make sure input isn't empty after cleaning
-					if ( empty( $clean_title ) || empty( $clean_url ) )
-						die( '1' );
-
-					// Add new link
-					$links[$role][] = array( 'title' => $clean_title, 'url' => $clean_url );
-					// Save links
-					$theme_my_login->options->set_option( 'user_links', $links );
-					$theme_my_login->options->save();
-
-					$link_row = array_merge( array( 'id' => max( array_keys( $links[$role] ) ) ), end( $links[$role] ) );
-
-					$x = new WP_Ajax_Response( array(
-						'what' => $role . '-link',
-						'id' => $link_row['id'],
-						'data' => $this->get_link_row( $link_row, $role, $c ),
-						'position' => 1,
-						'supplemental' => array( 'user_role' => $role )
-					) );
-				}
-			}
-		} else {
-			// Update a link
-			foreach ( $_POST['user_links'] as $role => $link ) {
-				// Set the link ID
-				$id = key( $link );
-
-				// Clean the input
-				$clean_title = wp_kses( $link[$id]['title'], null );
-				$clean_url = wp_kses( $link[$id]['url'], null );
-
-				// Make sure the requested link ID exists
-				if ( !isset( $links[$role][$id] ) )
-					die( '0' );
-
-				// Update the link if it has changed
-				if ( $links[$role][$id]['title'] != $clean_title || $links[$role][$id]['url'] != $clean_url ) {
-					$links[$role][$id] = array( 'title' => $clean_title, 'url' => $clean_url );
-					$theme_my_login->options->set_option( 'user_links', $links );
-					$theme_my_login->options->save();
-				}
-
-				$link_row = array_merge( array( 'id' => $id ), $links[$role][$id] );
-
-				$x = new WP_Ajax_Response( array(
-					'what' => $role . '-link',
-					'id' => $id,
-					'old_id' => $id,
-					'data' => $this->get_link_row( $link_row, $role, $c ),
-					'position' => 0,
-					'supplemental' => array( 'user_role' => $role )
-				) );
-			}
-		}
-		$x->send();
+	/**
+	 * Returns singleton instance
+	 *
+	 * @since 6.3
+	 * @access public
+	 * @return object
+	 */
+	public static function get_object( $class = null ) {
+		return parent::get_object( __CLASS__ );
 	}
 
 	/**
-	 * AJAX handler for deleting a link
+	 * Loads the module
 	 *
-	 * Callback for "wp_ajax_delete-user-link" hook in file "wp-admin/admin-ajax.php"
+	 * Called by Theme_My_Login_Abstract::__construct()
 	 *
+	 * @see Theme_My_Login_Abstract::__construct()
 	 * @since 6.0
-	 * @access public
+	 * @access protected
 	 */
-	function delete_user_link_ajax() {
-		global $theme_my_login, $id;
+	protected function load() {
+		add_action( 'tml_uninstall_custom-user-links/custom-user-links.php', array( &$this, 'uninstall' ) );
+	
+		add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+		add_action( 'admin_init', array( &$this, 'admin_init' ) );
 
-		$user_role = isset( $_POST['user_role'] ) ? $_POST['user_role'] : '';
-		if ( empty( $user_role ) )
-			die( '0' );
+		add_action( 'load-tml_page_theme_my_login_user_links', array( &$this, 'load_settings_page' ) );
 
-		check_ajax_referer( "delete-user-link_$id" );
-
-		$links =& $theme_my_login->options->get_option( 'user_links' );
-		if ( isset( $links[$user_role][$id] ) ) {
-			// Delete link
-			unset( $links[$user_role][$id] );
-			// Save links
-			$theme_my_login->options->set_option( 'user_links', $links );
-			$theme_my_login->options->save();
-			die( '1' );
-		}
-		die( '0' );
+		add_action( 'wp_ajax_add-user-link',    array( &$this, 'add_user_link_ajax' ) );
+		add_action( 'wp_ajax_delete-user-link', array( &$this, 'delete_user_link_ajax' ) );
 	}
 
 	/**
-	 * Adds "User Links" tab to Theme My Login menu
+	 * Returns default options
 	 *
-	 * Callback for "tml_admin_menu" hook in method Theme_My_Login_Admin::display_settings_page()
-	 *
-	 * @see Theme_My_Login_Admin::display_settings_page(), Theme_My_Login_Admin::add_menu_page, Theme_My_Login_Admin::add_submenu_page()
-	 * @uses Theme_My_Login_Admin::add_menu_page, Theme_My_Login_Admin::add_submenu_page()
-	 * @since 6.0
+	 * @since 6.3
 	 * @access public
 	 *
-	 * @param object $admin Reference to global $theme_my_login_admin object
+	 * @return array Default options
 	 */
-	function admin_menu( &$admin ) {
+	public static function default_options() {
+		return Theme_My_login_Custom_User_Links::default_options();
+	}
+
+	/**
+	 * Uninstalls the module
+	 *
+	 * Callback for "tml_uninstall_custom-user-links/custom-user-links.php" hook in method Theme_My_Login_Admin::uninstall()
+	 *
+	 * @see Theme_My_Login_Admin::uninstall()
+	 * @since 6.3
+	 * @access public
+	 */
+	public function uninstall() {
+		delete_option( $this->options_key );
+	}
+
+	/**
+	 * Adds "User Links" to Theme My Login menu
+	 *
+	 * @since 6.0
+	 * @access public
+	 */
+	public function admin_menu() {
 		global $wp_roles;
-		// Add menu tab
-		$admin->add_menu_page( __( 'User Links', 'theme-my-login' ), 'tml-options-user-links' );
-		// Iterate through each user role
-		foreach ( $wp_roles->get_names() as $role => $label ) {
-			// We don't want the 'pending' role created by the "User Moderation" module
-			if ( 'pending' == $role )
-				continue;
-			// Add submenu tab for the role
-			$admin->add_submenu_page( 'tml-options-user-links', translate_user_role( $label ), 'tml-options-user-links-' . $role, array( &$this, 'display_settings' ), array( $role ) );
+
+		add_submenu_page(
+			'theme_my_login',
+			__( 'Theme My Login Custom User Links Settings', 'theme-my-login' ),
+			__( 'User Links', 'theme-my-login' ),
+			'manage_options',
+			$this->options_key,
+			array( &$this, 'settings_page' )
+		);
+
+		foreach ( $wp_roles->get_names() as $role => $role_name ) {
+			if ( 'pending' != $role )
+				add_meta_box( $role, translate_user_role( $role_name ), array( &$this, 'user_links_meta_box' ), 'tml_page_' . $this->options_key, 'normal' );
 		}
 	}
 
 	/**
-	 * Sanitizes settings
+	 * Registers options group
 	 *
-	 * Callback for "tml_save_settings" hook in method Theme_My_Login_Admin::save_settings()
+	 * Callback for "admin_init" hook
 	 *
-	 * @see Theme_My_Login_Admin::save_settings()
-	 * @since 6.0
+	 * @since 6.3
 	 * @access public
-	 *
-	 * @param string|array $settings Settings passed in from filter
-	 * @return string|array Sanitized settings
 	 */
-	function save_settings( $settings ) {
-		// Bail-out if doing AJAX because it has it's own saving routine
-		if ( defined('DOING_AJAX') && DOING_AJAX )
-			return $settings;
-		// Handle updating/deleting of links
-		if ( isset( $_POST['user_links'] ) && is_array( $_POST['user_links'] ) && !empty( $_POST['user_links'] ) ) {
-			foreach ( $_POST['user_links'] as $role => $links ) {
-				foreach ( $links as $key => $link ) {
-					$clean_title = wp_kses( $link['title'], null );
-					$clean_url = wp_kses( $link['url'], null );
-					$links[$key] = array( 'title' => $clean_title, 'url' => $clean_url );
-					if ( ( empty( $clean_title ) && empty( $clean_url ) ) || ( isset( $_POST['delete_user_link'][$role][$key] ) ) )
-						unset( $links[$key] );
-				}
-				$settings['user_links'][$role] = array_values( $links );
-			}
-		}
-		// Handle new links
-		if ( isset( $_POST['new_user_link'] ) && is_array( $_POST['new_user_link'] ) && !empty( $_POST['new_user_link'] ) ) {
-			foreach ( $_POST['new_user_link'] as $role => $link ) {
-				$clean_title = wp_kses( $link['title'], null );
-				$clean_url = wp_kses( $link['url'], null );
-				if ( !empty( $clean_title ) && !empty( $clean_url ) )
-					$settings['user_links'][$role][] = array( 'title' => $clean_title, 'url' => $clean_url );
-			}
-		}
-		// Reset link keys
-		foreach ( $settings['user_links'] as $role => $links ) {
-			$settings['user_links'][$role] = array_values( $links );
-		}
-		return $settings;
+	public function admin_init() {
+		register_setting( $this->options_key, $this->options_key, array( &$this, 'save_settings' ) );
 	}
 
 	/**
@@ -201,70 +124,87 @@ class Theme_My_Login_Custom_User_Links_Admin extends Theme_My_Login_Module {
 	 * @since 6.0
 	 * @access public
 	 */
-	function load_settings_page() {
-		wp_enqueue_style( 'tml-custom-user-links-admin', plugins_url( 'theme-my-login/modules/custom-user-links/admin/css/custom-user-links-admin.css' ) );
-		wp_enqueue_script( 'tml-custom-user-links-admin', plugins_url( 'theme-my-login/modules/custom-user-links/admin/js/custom-user-links-admin.js' ), array( 'wp-lists', 'jquery-ui-sortable' ) );
+	public function load_settings_page() {
+		wp_enqueue_style(  'tml-custom-user-links-admin', plugins_url( 'theme-my-login/modules/custom-user-links/admin/css/custom-user-links-admin.css' ) );
+		wp_enqueue_script( 'tml-custom-user-links-admin', plugins_url( 'theme-my-login/modules/custom-user-links/admin/js/custom-user-links-admin.js' ), array( 'wp-lists', 'postbox', 'jquery-ui-sortable' ) );
+	}
+
+	/**
+	 * Renders settings page
+	 *
+	 * Callback for add_submenu_page()
+	 *
+	 * @since 6.3
+	 * @access public
+	 */
+	public function settings_page() {
+		global $current_screen;
+		?>
+		<div class="wrap">
+			<?php screen_icon( 'options-general' ); ?>
+			<h2><?php echo esc_html_e( 'Theme My Login Custom User Links Settings', 'theme-my-login' ); ?></h2>
+			<?php settings_errors(); ?>
+
+			<form method="post" action="options.php">
+				<?php
+				settings_fields( $this->options_key );
+				wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
+				wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
+				?>
+				<div id="<?php echo $this->options_key; ?>" class="metabox-holder">
+					<?php do_meta_boxes( $current_screen->id, 'normal', null ); ?>
+				</div>
+				<?php submit_button(); ?>
+			</form>
+		</div>
+		<?php
 	}
 
 	/**
 	 * Outputs user links admin menu for specified role
 	 *
-	 * Callback for "$hookname" hook in method Theme_My_Login_Admin::add_submenu_page()
+	 * Callback for add_settings_section()
 	 *
-	 * @see Theme_My_Login_Admin::add_submenu_page()
 	 * @since 6.0
 	 * @access public
 	 *
-	 * @param string $role Name of user role
+	 * @param array $args Arguments passed in by add_settings_section()
 	 */
-	function display_settings( $role ) {
-		global $theme_my_login;
-
-		$links =& $theme_my_login->options->get_option( array( 'user_links', $role ) );
-		if ( empty($links) )
-			$links = array();
+	public function user_links_meta_box( $object, $box ) {
+		$role  = $box['id'];
+		$links = $this->get_option( $role, array() );
 		?>
 	<div id="ajax-response-<?php echo $role; ?>" class="ajax-response"></div>
 
-	<table id="<?php echo $role; ?>-link-table"<?php if ( empty( $links ) ) echo ' style="display: none;"'; ?> class="sortable">
+	<table id="<?php echo $role; ?>-link-table"<?php if ( empty( $links ) ) echo ' style="display: none;"'; ?> class="sortable user-links">
 		<thead>
 		<tr>
-			<th class="left"><?php _e( 'Title', 'theme-my-login' ); ?></th>
-			<th><?php _e( 'URL', 'theme-my-login' ); ?></th>
+			<th class="left"><?php _e( 'Title' ); ?></th>
+			<th><?php _e( 'URL' ); ?></th>
 			<th></th>
 		</tr>
 		</thead>
-		<tbody id="<?php echo $role; ?>-link-list" class="list:user-link">
-		<?php if ( empty( $links ) ) {
+		<tbody id="<?php echo $role; ?>-link-list" class="list:user-link" data-wp-lists="list:user-link"><?php
+		if ( empty( $links ) ) {
 			echo '<tr><td></td></tr>';
 		} else {
 			$count = 0;
 			foreach ( $links as $key => $link ) {
 				$link['id'] = $key;
-				echo $this->get_link_row( $link, $role, $count );
+				echo self::get_link_row( $link, $role );
 			}
 		} ?>
 		</tbody>
 	</table>
 
-	<p><strong><?php _e( 'Add New link:' , 'theme-my-login' ) ?></strong></p>
-
-	<table id="new-<?php echo $role; ?>-link">
-	<thead>
-	<tr>
-		<th class="left"><label for="new_user_link[<?php echo $role; ?>][title]"><?php _e( 'Title', 'theme-my-login' ) ?></label></th>
-		<th><label for="new_user_link[<?php echo $role; ?>][url]"><?php _e( 'URL', 'theme-my-login' ) ?></label></th>
-		<th></th>
-	</tr>
-	</thead>
-
+	<table id="new-<?php echo $role; ?>-link" class="new-link">
 	<tbody>
 	<tr>
-		<td class="left"><input id="new_user_link[<?php echo $role; ?>][title]" name="new_user_link[<?php echo $role; ?>][title]" type="text" tabindex="8" size="20" /></td>
-		<td class="center"><input id="new_user_link[<?php echo $role; ?>][url]" name="new_user_link[<?php echo $role; ?>][url]" type="text" tabindex="8" size="20" /></td>
+		<td class="left"><input id="new_user_link[<?php echo $role; ?>][title]" name="new_user_link[<?php echo $role; ?>][title]" type="text" size="20" /></td>
+		<td class="center"><input id="new_user_link[<?php echo $role; ?>][url]" name="new_user_link[<?php echo $role; ?>][url]" type="text" size="20" /></td>
 		<td class="submit">
-			<input type="submit" id="add_new_user_link_<?php echo $role; ?>" name="add_new_user_link[<?php echo $role; ?>]" class="add:<?php echo $role; ?>-link-list:new-<?php echo $role; ?>-link" tabindex="9" value="<?php esc_attr_e( 'Add link', 'theme-my-login' ) ?>" />
-			<?php wp_nonce_field( 'add-user-link', '_ajax_nonce', false ); ?>
+			<?php submit_button( __( 'Add Link' ), "add:$role-link-list:new-$role-link", "add_new_user_link[$role]", false, array( 'id' => "new-$role-link-submit", 'data-wp-lists' => "add:$role-link-list:new-$role-link" ) ); ?>
+			<?php wp_nonce_field( 'add-user-link', '_ajax_nonce-add-user-link', false ); ?>
 		</td>
 	</tr>
 	</tbody>
@@ -276,79 +216,198 @@ class Theme_My_Login_Custom_User_Links_Admin extends Theme_My_Login_Module {
 	 * Outputs a link row to the table
 	 *
 	 * @since 6.0
-	 * @access public
+	 * @access private
 	 *
 	 * @param array $link Link data
 	 * @param string $role Name of user role
-	 * @param int $count Reference to counter variable
 	 * @return sring Link row
 	 */
-	function get_link_row( $link, $role, &$count ) {
+	private static function get_link_row( $link, $role ) {
 		$r = '';
-		++ $count;
-		if ( $count % 2 )
-			$style = 'alternate';
-		else
-			$style = '';
 
-		$link = (object) $link;
-
-		$delete_nonce = wp_create_nonce( 'delete-user-link_' . $link->id );
+		$delete_nonce = wp_create_nonce( 'delete-user-link_' . $link['id'] );
 		$update_nonce = wp_create_nonce( 'add-user-link' );
 
-		$r .= "\n\t<tr id='$role-link-$link->id' class='$style'>";
-		$r .= "\n\t\t<td class='left'><label class='screen-reader-text' for='user_links[$role][$link->id][title]'>" . __( 'Title', 'theme-my-login' ) . "</label><input name='user_links[$role][$link->id][title]' id='user_links[$role][$link->id][title]' tabindex='6' type='text' size='20' value='$link->title' />";
+		$r .= "\n\t\t<tr id='$role-link-{$link['id']}'>";
+		$r .= "\n\t\t\t<td class='left'><label class='screen-reader-text' for='user_links[$role][{$link['id']}][title]'>" . __( 'Title' ) . "</label><input name='user_links[$role][{$link['id']}][title]' id='user_links[$role][{$link['id']}][title]' type='text' size='20' value='{$link['title']}' /></td>";
+		$r .= "\n\t\t\t<td class='center'><label class='screen-reader-text' for='user_links[$role][{$link['id']}][url]'>" . __( 'URL' ) . "</label><input name='user_links[$role][{$link['id']}][url]' id='user_links[$role][{$link['id']}][url]' type='text' size='20' value='{$link['url']}' /></td>";
+		$r .= "\n\t\t\t<td class='submit'>";
+		$r .= "\n\t\t\t\t";
+		$r .= get_submit_button( __( 'Delete' ), "delete:$role-link-list:$role-link-{$link['id']}::_ajax_nonce=$delete_nonce deletelink", "deletelink[{$link['id']}]", false, array( 'data-wp-lists' => "delete:$role-link-list:$role-link-{$link['id']}::_ajax_nonce=$delete_nonce" ) );
+		$r .= "\n\t\t\t\t";
+		$r .= get_submit_button( __( 'Update' ), "add:$role-link-list:$role-link-{$link['id']}::_ajax_nonce-add-user-link=$update_nonce updatelink", "$role-link-{$link['id']}-submit", false, array( 'data-wp-lists' => "add:$role-link-list:$role-link-{$link['id']}::_ajax_nonce-add-user-link=$update_nonce" ) );
+		$r .= "\n\t\t\t\t";
 		$r .= wp_nonce_field( 'change-user-link', '_ajax_nonce', false, false );
-		$r .= "</td>";
-
-		$r .= "\n\t\t<td class='center'><label class='screen-reader-text' for='user_links[$role][$link->id][url]'>" . __( 'URL', 'theme-my-login' ) . "</label><input name='user_links[$role][$link->id][url]' id='user_links[$role][$link->id][url]' tabindex='6' type='text' size='20' value='$link->url' /></td>";
-
-		$r .= "\n\t\t<td class='submit'><input name='delete_user_link[$role][$link->id]' type='submit' class='delete:$role-link-list:$role-link-$link->id::_ajax_nonce=$delete_nonce deletelink' tabindex='6' value='". esc_attr__( 'Delete' ) ."' />";
-		$r .= "\n\t\t<input name='updatelink' type='submit' class='add:$role-link-list:$role-link-$link->id::_ajax_nonce=$update_nonce updatelink' tabindex='6' value='". esc_attr__( 'Update' ) ."' /></td>\n\t</tr>";
+		$r .= "\n\t\t\t</td>";
+		$r .= "\n\t\t</tr>";
 		return $r;
 	}
 
 	/**
-	 * Activates this module
+	 * Sanitizes settings
 	 *
-	 * Callback for "tml_activate_custom-user-links/custom-user-links.php" hook in method Theme_My_Login_Admin::activate_module()
+	 * Callback for register_setting()
 	 *
-	 * @see Theme_My_Login_Admin::activate_module()
 	 * @since 6.0
 	 * @access public
 	 *
-	 * @param object $theme_my_login Reference to global $theme_my_login object
+	 * @param string|array $settings Settings passed in from filter
+	 * @return string|array Sanitized settings
 	 */
-	function activate( &$theme_my_login ) {
-		$options = Theme_My_Login_Custom_User_Links::init_options();
-		$theme_my_login->options->set_option( 'user_links', $options['user_links'] );
+	public function save_settings( $settings ) {
+		global $wp_roles;
+
+		// Bail-out if doing AJAX because it has it's own saving routine
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+			return $settings;
+
+		foreach ( $wp_roles->get_names() as $role => $role_name ) {
+			if ( 'pending' == $role )
+				continue;
+
+			$settings[$role] = array();
+
+			// Handle updating/deleting of links
+			if ( ! empty( $_POST['user_links'] ) && ! empty( $_POST['user_links'][$role] ) ) {
+				foreach ( (array) $_POST['user_links'][$role] as $key => $link ) {
+					$clean_title = wp_kses( $link['title'], null );
+					$clean_url   = wp_kses( $link['url'],   null );
+					if ( ! empty( $clean_title ) && ! empty( $clean_url ) && ! isset( $_POST['delete_user_link'][$role][$key] ) ) {
+						$settings[$role][] = array(
+							'title' => $clean_title,
+							'url'   => $clean_url
+						);
+					}
+				}
+			}
+
+			// Handle new links
+			if ( ! empty( $_POST['new_user_link'] ) && ! empty( $_POST['new_user_link'][$role] ) ) {
+				$clean_title = wp_kses( $_POST['new_user_link'][$role]['title'], null );
+				$clean_url   = wp_kses( $_POST['new_user_link'][$role]['url'],   null );
+				if ( ! empty( $clean_title ) && ! empty( $clean_url ) ) {
+					$settings[$role][] = array(
+						'title' => $clean_title,
+						'url'   => $clean_url
+					);
+				}
+			}
+		}
+
+		return $settings;
 	}
 
 	/**
-	 * Loads the module
+	 * AJAX handler for adding/updating a link
+	 *
+	 * Callback for "wp_ajax_add-user-link" hook in file "wp-admin/admin-ajax.php"
 	 *
 	 * @since 6.0
 	 * @access public
 	 */
-	function load() {
-		add_action( 'tml_activate_custom-user-links/custom-user-links.php', array( &$this, 'activate' ) );
-		add_action( 'tml_admin_menu', array( &$this, 'admin_menu' ) );
-		add_filter( 'tml_save_settings', array( &$this, 'save_settings' ) );
+	public function add_user_link_ajax() {
+		if ( ! current_user_can( 'manage_options' ) )
+			die( '-1' );
 
-		add_action( 'load-settings_page_theme-my-login', array( &$this, 'load_settings_page' ) );
+		check_ajax_referer( 'add-user-link', '_ajax_nonce-add-user-link' );
 
-		add_action( 'wp_ajax_add-user-link', array( &$this, 'add_user_link_ajax' ) );
-		add_action( 'wp_ajax_delete-user-link', array( &$this, 'delete_user_link_ajax' ) );
+		if ( isset( $_POST['new_user_link'] ) ) {
+			foreach ( $_POST['new_user_link'] as $user_role => $link ) {
+				if ( is_array( $link ) && ! empty( $link ) ) {
+					$clean_title = wp_kses( $link['title'], null );
+					$clean_url   = wp_kses( $link['url'],   null );
+
+					if ( empty( $clean_title ) || empty( $clean_url ) )
+						wp_die( -1 );
+
+					$links = $this->get_option( $user_role );
+
+					$links[] = array(
+						'title' => $clean_title,
+						'url'   => $clean_url
+					);
+
+					$this->set_option( $user_role, $links );
+
+					$link_row       = end( $links );
+					$link_row['id'] = key( $links );
+
+					$x = new WP_Ajax_Response( array(
+						'what' => $user_role . '-link',
+						'id' => $link_row['id'],
+						'data' => self::get_link_row( $link_row, $user_role ),
+						'position' => 1,
+						'supplemental' => compact( 'user_role' )
+					) );
+				}
+			}
+		} else {
+			foreach ( $_POST['user_links'] as $user_role => $link ) {
+				$id = key( $link );
+
+				$clean_title = wp_kses( $link[$id]['title'], null );
+				$clean_url   = wp_kses( $link[$id]['url'],   null );
+
+				if ( empty( $clean_title ) || empty( $clean_url ) )
+					wp_die( -1 );
+
+				if ( ! $link = $this->get_option( array( $user_role, $id ) ) )
+					wp_die( 0 );
+
+				$link = array(
+					'title' => $clean_title,
+					'url'   => $clean_url
+				);
+
+				$this->set_option( array( $user_role, $id ), $link );
+
+				$link['id'] = $id;
+
+				$x = new WP_Ajax_Response( array(
+					'what' => $user_role . '-link',
+					'id' => $id,
+					'old_id' => $id,
+					'data' => self::get_link_row( $link, $user_role ),
+					'position' => 0,
+					'supplemental' => compact( 'user_role' )
+				) );
+			}
+		}
+		$this->save_options();
+
+		$x->send();
+	}
+
+	/**
+	 * AJAX handler for deleting a link
+	 *
+	 * Callback for "wp_ajax_delete-user-link" hook in file "wp-admin/admin-ajax.php"
+	 *
+	 * @since 6.0
+	 * @access public
+	 */
+	public function delete_user_link_ajax() {
+		if ( ! current_user_can( 'manage_options' ) )
+			wp_die( -1 );
+
+		$user_role = isset( $_POST['user_role'] ) ? $_POST['user_role'] : '';
+		if ( empty( $user_role ) )
+			wp_die( -1 );
+
+		$id = isset( $_POST['id'] ) ? (int) $_POST['id'] : 0;
+
+		check_ajax_referer( "delete-user-link_$id" );
+
+		if ( $this->get_option( array( $user_role, $id ) ) ) {
+			$this->delete_option( array( $user_role, $id ) );
+			$this->save_options();
+			wp_die( 1 );
+		}
+		wp_die( 0 );
 	}
 }
 
-/**
- * Holds the reference to Theme_My_Login_Custom_User_Links_Admin object
- * @global object $theme_my_login_custom_user_links_admin
- * @since 6.0
- */
-$theme_my_login_custom_user_links_admin = new Theme_My_Login_Custom_User_Links_Admin();
+Theme_My_Login_Custom_User_Links_Admin::get_object();
 
-endif; // Class exists
+endif;
 
-?>
