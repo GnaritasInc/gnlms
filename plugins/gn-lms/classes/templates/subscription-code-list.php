@@ -13,7 +13,7 @@ $today = strtotime("now")
 	<td><?php echo htmlspecialchars($record->code); ?></td>
 	<td><?php echo htmlspecialchars($record->expiration_date); ?></td>
 	<td><?php echo htmlspecialchars($record->user_limit); ?></td>
-	<td><?php echo strtotime($record->expiration_date)<strtotime("now")? "Expired":($record->record_status ? "Active" : "Inactive");?></td>
+	<td><?php echo ($record->expiration_date && strtotime($record->expiration_date) < strtotime("now")) ? "Expired":($record->record_status ? "Active" : "Inactive");?></td>
 	<td><a href="registration-code/?id=<?php echo $id; ?>">Edit</a></td>
 </tr>
 <?php endforeach; ?>
