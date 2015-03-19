@@ -1,4 +1,7 @@
-<?php if($context["_is_profile"]): ?><h2>My Profile</h2><?php endif; ?>
+<?php if($context["_is_profile"]): ?>
+<h2>My Profile</h2>
+<p>To change your password, complete the "Password" and "Confirm password" fields and click "Update Profile". Your password will then be updated.</p>
+<?php endif; ?>
 
 <div id="gnLMSUser">
 <?php
