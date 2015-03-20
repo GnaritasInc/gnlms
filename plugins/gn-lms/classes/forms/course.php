@@ -41,7 +41,7 @@
 <h2><?php echo $atts['title']; ?></h2>
 <div class="gnlms-course-detail full_span">
 <h3><?php echo htmlspecialchars($context['title']); ?></h3>
-<p><?php echo htmlspecialchars(trim($context['description'])); ?></p>
+<div class="gnlms-course-description"><?php echo trim($context['description']); ?></div>
 <div class="gnlms-course-status">
 <?php if($msg): ?><p class="gnlms-msg"><?php echo htmlspecialchars($msg); ?></p><?php endif; ?>
 <?php echo $statusText; ?> <?php if(!$registration) echo $actionButton; ?>
