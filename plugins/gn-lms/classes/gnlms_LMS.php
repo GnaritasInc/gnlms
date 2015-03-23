@@ -52,7 +52,8 @@ class gnlms_LMS extends gn_WebInterface {
 
 		// add_action('user_register', array(&$this, 'addLMSUser'));
 
-		add_action('profile_update', array(&$this, 'updateLMSUser'));
+	// CTW: I think this is wrong; ***
+	//add_action('profile_update', array(&$this, 'updateLMSUser'));
 
 		add_action('gnlms_data_update', array(&$this, 'dataUpdateHandler'));
 
@@ -95,13 +96,12 @@ class gnlms_LMS extends gn_WebInterface {
 
 		add_action('signup_extra_fields',array(&$this, 'ms_registrationAddFields'));
 		add_filter('wpmu_validate_user_signup',array(&$this, 'ms_registrationCheckFields'),10,3);
-
 		add_filter('add_signup_meta',array(&$this, 'ms_add_signup_meta'),10,3);
+		add_action('wpmu_activate_user',array(&$this, 'ms_registrationDbInsertFields'),10,3);
 
 
 		//add_action('user_register', array(&$this, 'registrationDbInsertFields'));
 
-		add_action('wpmu_activate_user',array(&$this, 'ms_registrationDbInsertFields'),10,3);
 
 
 		//add_action('before_signup_form',array(&$this, 'before_signup_form'));
@@ -109,7 +109,8 @@ class gnlms_LMS extends gn_WebInterface {
 
 
 
-		add_action('profile_update', array(&$this, 'updateLMSUser'));
+		// CTW: I think this is wrong; ***
+		//add_action('profile_update', array(&$this, 'updateLMSUser'));
 
 		add_action ('edit_user_profile_update', array(&$this, 'saveCustomProfileFields'));
 		add_action ('personal_options_update', array(&$this, 'saveCustomProfileFields'));
@@ -296,9 +297,9 @@ class gnlms_LMS extends gn_WebInterface {
 		}
 	}
 
-		function updateUserMeta ($metaID, $userID, $key, $value) {
+	function updateUserMeta ($metaID, $userID, $key, $value) {
 			$this->data->setLMSUserField($userID, $key, $value);
-		}
+	}
 
 
 	function user_in_role ($role, $user=null) {
@@ -1224,6 +1225,7 @@ function ms_registrationAddFields ($errors) {
 		if ( current_user_can( 'manage_options' ) ) {
 			update_user_meta ($user_id, "gnlms_test", (strlen(trim($_POST['test'])) ? 1 : 0));
 		}
+		$this->updateLMSUser($user_id);
 	}
 
 	function ms_registrationCheckFields ( $result) {

@@ -39,7 +39,6 @@ class gnlms_Data extends gn_PluginDB {
 				"columns"=>array(
 					"id",
 					"organization_id",
-					"extorganization",
 					"subscription_code_id",
 					"user_name",
 					"email",
@@ -337,7 +336,17 @@ class gnlms_Data extends gn_PluginDB {
 		$this->db->query($sql);
 	}
 
-	function updateLMSUser ($user) {
+
+		function var_error_log( $object=null ){
+			ob_start();                    // start buffer capture
+			var_dump( $object );           // dump the values
+			$contents = ob_get_contents(); // put the buffer into a variable
+			ob_end_clean();                // end capture
+			error_log( $contents );        // log contents of the result of var_dump( $object )
+		}
+
+
+	function updateLMSUser ($user, $newdata=false) {
 		/*
 		$sql = $this->replaceTableRefs("update #user# set email=%s, first_name=%s, last_name=%s where id=%d");
 		$sql = $this->db->prepare($sql, $user->user_email, $user->first_name, $user->last_name, $user->ID);
@@ -349,9 +358,10 @@ class gnlms_Data extends gn_PluginDB {
 		// The below code does not
 		// ****** q: Multisite ****
 	    error_log("Doing DB updateLMSUser ");
-	    $data=$data?$data:$_POST;
+	    $data=$newdata?$newdata:$_POST;
 				$data["id"] = $user->ID;
 				//$data["gnlms_data_form"] = "user";
+
 				$this->updateEdit ("user", $data);
 		error_log("Finished updateLMSUser Update");
 
