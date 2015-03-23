@@ -117,6 +117,9 @@ class gnlms_LMS extends gn_WebInterface {
 		add_action('edit_user_profile', array(&$this, 'showCustomProfileFields'));
 		add_action('show_user_profile', array(&$this, 'showCustomProfileFields'));
 
+		add_action('updated_user_meta', array(&$this, 'updateUserMeta'), 10, 4);
+		add_action('added_user_meta', array(&$this, 'updateUserMeta'), 10, 4);
+
 		// Page access
 
 		add_action("template_redirect", array(&$this, "checkPageAccess"));
@@ -292,6 +295,11 @@ class gnlms_LMS extends gn_WebInterface {
 			$this->data->updateLMSUser($user);
 		}
 	}
+
+		function updateUserMeta ($metaID, $userID, $key, $value) {
+			$this->data->setLMSUserField($userID, $key, $value);
+		}
+
 
 	function user_in_role ($role, $user=null) {
 		if(!$user) {
