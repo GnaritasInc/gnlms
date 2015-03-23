@@ -27,7 +27,17 @@ class gnlms_Data extends gn_PluginDB {
 		$this->tableDefinition = array(
 			"course" => array(
 				"table"=>"course",
-				"columns"=>array("id", "course_number", "record_status", "last_update", "title", "description", "url"),
+				"columns"=>array(
+					"id",
+					"course_number",
+					"last_update",
+					"title",
+					"description",
+					"url",
+					"certificate",
+					"credit",
+					"record_status"				
+				),
 				"listcolumns"=>array("id", "title", "case record_status when 1 then 'Yes' else 'No' end as 'active'"),
 				"defaults"=>array(
 					"record_status"=>0,
