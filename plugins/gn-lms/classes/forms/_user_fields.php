@@ -22,6 +22,8 @@
 <p><label><span>Confirm Password:</span> <input autocomplete="off" name="password" type="password" value=""/></label></p>
 
 
+<?php /* ?>
+
 <p><label><span>Organization:</span> <br/>
 	<select name="organization_id">
 	<option value="">N/A</option>
@@ -30,8 +32,11 @@
 		<option value="<?php echo $id ?>"<?php echo $selected; ?>><?php echo(htmlspecialchars($name)); ?></option>
 	<?php endforeach; ?>
 	</select></label></p>
+<?php */ ?>
+
 <?php } ?>
 
+<p><label><span>Organization:</span> <input type="text" name="title" value="<?php echo(htmlspecialchars($context['extorganization'])); ?>"/></label></p>
 <p><label><span>Title:</span> <input type="text" name="title" value="<?php echo(htmlspecialchars($context['title'])); ?>"/></label></p>
 <!-- <p><label><span>Role:</span> <input type="text" name="role" value="<?php echo(htmlspecialchars($context['role'])); ?>"/></label></p> -->
 <p><label><span>Phone:</span> <input type="text" name="phone" value="<?php echo(htmlspecialchars($context['phone'])); ?>"/></label></p>
