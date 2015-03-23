@@ -15,6 +15,8 @@
 	<label><input type="text" name="course_number" value="<?php echo(htmlspecialchars($context['course_number'])); ?>"/>Number/ID</label>
 	<label><input type="checkbox" name="record_status" value="1" <?php $this->writeChecked($context['record_status']==1);?>/> Active</label>
 	<label><input type="text" name="url" size="100" value="<?php echo(htmlspecialchars($context['url'])); ?>"/> URL</label>
+	<label>Credit<input type="text" name="credit" value="<?php echo $context['credit']; ?>"/></label>
+	<label>Certificate<input type="text" name="certificate" size="50" value="<?php echo $context['certificate']; ?>"/></label>
 	<label for="description">Description</label>
 	<textarea name="description" id="description"><?php echo(htmlspecialchars(trim($context['description']))); ?></textarea>
 	<label>Version/Update date: <input type="date" name="last_update" value="<?php echo(htmlspecialchars($context['last_update'])); ?>"/></label>
