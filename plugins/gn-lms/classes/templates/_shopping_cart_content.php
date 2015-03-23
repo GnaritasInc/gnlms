@@ -12,7 +12,6 @@
 		</li>
 	<?php endforeach; ?>
 	</ul>
-<p><a href="/checkout/">Proceed to checkout</a></p>
 <?php else: ?>
 <p>No courses selected.</p>
 <?php endif; ?>

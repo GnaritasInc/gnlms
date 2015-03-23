@@ -1,5 +1,5 @@
 jQuery(document).ready( function($) {
-	$('#tml-options-user-links tbody').wpList( {
+	$('#theme_my_login_user_links tbody').wpList( {
 		addBefore: function( s ) {
 			var cls = $(s.target).attr('class').split(':'),
 				role = cls[1].split('-')[0];
@@ -18,7 +18,10 @@ jQuery(document).ready( function($) {
 			return s;
 		},
 		delAfter: function( r, s ) {
+			var t = $('#' + s.element).closest('tbody');
 			$('#' + s.element).remove();
+			if (t.children('tr').length == 0)
+				t.parent().hide();
 		}
 	} );
 	
@@ -29,9 +32,11 @@ jQuery(document).ready( function($) {
 		return ui;
 	};
 	
-	$('#tml-options-user-links table.sortable tbody').sortable({
+	$('#theme_my_login_user_links table.sortable tbody').sortable({
 		axis: 'y',
 		helper: fixHelper,
 		items: 'tr'
 	});
+
+	postboxes.add_postbox_toggles(pagenow);
 } );

@@ -9,7 +9,7 @@ Theme My Login will always look in your theme's directory first, before using th
 	<div class="tml-user-avatar"><?php $template->the_user_avatar(); ?></div>
 	<?php endif; ?>
 
-	<?php $this->the_user_links(); ?>
+	<?php $template->the_user_links(); ?>
 	
-<?php do_action_ref_array( 'tml_user_panel', array( $template ) ); ?>
+	<?php do_action( 'tml_user_panel' ); ?>
 </div>

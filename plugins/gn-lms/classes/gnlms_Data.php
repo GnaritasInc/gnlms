@@ -53,7 +53,8 @@ class gnlms_Data extends gn_PluginDB {
 					"country",
 					"title",
 					"role",
-					"phone"
+					"phone",
+					"assigned_org"
 				),
 				"validationFunction"=>"validateUser"
 			),
@@ -339,6 +340,25 @@ class gnlms_Data extends gn_PluginDB {
 		$sql = $this->db->prepare($sql, $user->user_email, $user->first_name, $user->last_name, $user->ID);
 
 		$this->db->query($sql);
+	}
+	
+	function setLMSUserField ($userID, $key, $value) {
+		
+		error_log("setLMSUserField ($userID, '$key', '$value')");
+		
+		$excludeColumns = array("id");
+		$userColumns = $this->tableDefinition["user"]["columns"];
+		
+		if (in_array($key, array_diff($userColumns, $excludeColumns))) {
+			$isNull = strlen($value) ? false : true;
+			$valueFormat = $isNull ? "null" : "%s";
+			$values = $isNull ? $userID : array($value, $userID);
+			$sql = $this->replaceTableRefs("update #user# set $key=$valueFormat where id=%d");
+			$sql = $this->db->prepare($sql, $values);
+			
+			error_log("LMS user update SQL: $sql");
+			$this->db->query($sql);
+		}	
 	}
 
 	function updateWPUserData ($data) {

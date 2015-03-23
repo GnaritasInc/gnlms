@@ -116,6 +116,9 @@ class gnlms_LMS extends gn_WebInterface {
 
 		add_action('edit_user_profile', array(&$this, 'showCustomProfileFields'));
 		add_action('show_user_profile', array(&$this, 'showCustomProfileFields'));
+		
+		add_action('updated_user_meta', array(&$this, 'updateUserMeta'), 10, 4);
+		add_action('added_user_meta', array(&$this, 'updateUserMeta'), 10, 4);
 
 		// Page access
 
@@ -291,6 +294,10 @@ class gnlms_LMS extends gn_WebInterface {
 			$this->data->updateLMSUser($user);
 		}
 	}
+	
+	function updateUserMeta ($metaID, $userID, $key, $value) {
+		$this->data->setLMSUserField($userID, $key, $value);
+	}
 
 	function user_in_role ($role, $user=null) {
 		if(!$user) {
@@ -413,12 +420,12 @@ class gnlms_LMS extends gn_WebInterface {
 		if(!$msg = $this->validateShoppingCart()) {
 			if ($action == "gnlms_shopping_cart_add") {
 				$this->addSelectedCourse($courseID);
-				$msg="Course added.";
+				$msg="Course added to cart.";
 
 			}
 			else if ($action == "gnlms_shopping_cart_remove") {
 				$this->removeSelectedCourse($courseID);
-				$msg="Course removed.";
+				$msg="Course removed from cart.";
 			}
 		}
 		else {
@@ -1153,17 +1160,17 @@ class gnlms_LMS extends gn_WebInterface {
 		$todays_date = date("Y-m-d");
 		$today = strtotime($todays_date);
 
-		$expiration_date = strtotime($codeData->expiration_date);
+		$expiration_date = $codeData->expiration_date;
 
 
 		if ($codeData->record_status!=1) {
 			return (false);
 		}
-		else if ($expiration_date<$today) {
+		else if ($expiration_date && strtotime($expiration_date) < $today) {
 			return (false);
 		}
 
-		else if ($this->data->retrieveSubscriptionCount($codeData->id) >= $codeData->user_limit) {
+		else if ($codeData->user_limit && $this->data->retrieveSubscriptionCount($codeData->id) >= $codeData->user_limit) {
 			return (false);
 		}
 		else {

@@ -33,14 +33,15 @@
 		$statusText = "This course is currently ".($isSelected ? "in your shopping cart." : "available.");
 		ob_start();
 		include("_shopping_cart_update.php");
-		$actionButton = apply_filters("gnlms_available_course_action_button", ob_get_clean(), $id, $userID);
+		$filter = $isSelected ? "gnlms_selected_course_action_button" : "gnlms_available_course_action_button";
+		$actionButton = apply_filters($filter, ob_get_clean(), $id, $userID);
 	}
 ?>
 
 <h2><?php echo $atts['title']; ?></h2>
 <div class="gnlms-course-detail full_span">
 <h3><?php echo htmlspecialchars($context['title']); ?></h3>
-<p><?php echo htmlspecialchars(trim($context['description'])); ?></p>
+<div class="gnlms-course-description"><?php echo trim($context['description']); ?></div>
 <div class="gnlms-course-status">
 <?php if($msg): ?><p class="gnlms-msg"><?php echo htmlspecialchars($msg); ?></p><?php endif; ?>
 <?php echo $statusText; ?> <?php if(!$registration) echo $actionButton; ?>

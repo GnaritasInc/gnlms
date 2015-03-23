@@ -99,3 +99,16 @@ input {
 	border: 2px inset #ccc;
 }
 */
+
+div.entry a.gnlms-button:link, div.entry a.gnlms-button:visited {
+	color: rgb(69,69,69);
+}
+
+input.gnlms-button.ui-button {
+	padding: 4px;
+}
+
+#theme-my-login.mu_register p {
+	text-align: left;
+	margin: 1em 0;
+}
