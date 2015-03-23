@@ -39,12 +39,14 @@ class gnlms_Data extends gn_PluginDB {
 				"columns"=>array(
 					"id",
 					"organization_id",
+					"extorganization",
 					"subscription_code_id",
 					"user_name",
 					"email",
 					"first_name",
 					"last_name",
 					"middle_initial",
+					"middle_name",
 					"address_1",
 					"address_2",
 					"city",
@@ -197,7 +199,7 @@ class gnlms_Data extends gn_PluginDB {
 				"listcolumns"=>array("c.*, ucr.course_status, ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score")
 				*/
 
-				
+
 				"list_select_table"=>"#course# c left join #user_course_registration# ucr on c.id=ucr.course_id and ucr.user_id=%d",
 				"listcolumns"=>array("c.*, case when ucr.record_status=0 then 'Inactive' else ucr.course_status end as 'course_status', ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score")
 			),
@@ -336,29 +338,23 @@ class gnlms_Data extends gn_PluginDB {
 	}
 
 	function updateLMSUser ($user) {
+		/*
 		$sql = $this->replaceTableRefs("update #user# set email=%s, first_name=%s, last_name=%s where id=%d");
 		$sql = $this->db->prepare($sql, $user->user_email, $user->first_name, $user->last_name, $user->ID);
 
 		$this->db->query($sql);
-	}
-	
-	function setLMSUserField ($userID, $key, $value) {
-		
-		error_log("setLMSUserField ($userID, '$key', '$value')");
-		
-		$excludeColumns = array("id");
-		$userColumns = $this->tableDefinition["user"]["columns"];
-		
-		if (in_array($key, array_diff($userColumns, $excludeColumns))) {
-			$isNull = strlen($value) ? false : true;
-			$valueFormat = $isNull ? "null" : "%s";
-			$values = $isNull ? $userID : array($value, $userID);
-			$sql = $this->replaceTableRefs("update #user# set $key=$valueFormat where id=%d");
-			$sql = $this->db->prepare($sql, $values);
-			
-			error_log("LMS user update SQL: $sql");
-			$this->db->query($sql);
-		}	
+		*/
+
+		// CW: The above code was properly de-referencing the table to the blog specific table
+		// The below code does not
+		// ****** q: Multisite ****
+	    error_log("Doing DB updateLMSUser ");
+	    $data=$data?$data:$_POST;
+				$data["id"] = $user->ID;
+				//$data["gnlms_data_form"] = "user";
+				$this->updateEdit ("user", $data);
+		error_log("Finished updateLMSUser Update");
+
 	}
 
 	function updateWPUserData ($data) {
@@ -434,15 +430,15 @@ class gnlms_Data extends gn_PluginDB {
 
 		return $this->db->get_results($sql);
 	}
-	
+
 	function getUserSubscriptionCodeCourse ($userID, $courseID) {
 		$sql = "select scc.*";
 		$sql .= " from #subscription_code_course# scc inner join #user# u on u.subscription_code_id=scc.subscription_code_id";
 		$sql .= " where u.id=%d and scc.course_id=%d";
-		
+
 		$sql = $this->replaceTableRefs($sql);
 		$sql = $this->db->prepare($sql, $userID, $courseID);
-		
+
 		return $this->db->get_row($sql);
 	}
 

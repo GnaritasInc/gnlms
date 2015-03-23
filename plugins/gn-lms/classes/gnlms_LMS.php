@@ -116,9 +116,6 @@ class gnlms_LMS extends gn_WebInterface {
 
 		add_action('edit_user_profile', array(&$this, 'showCustomProfileFields'));
 		add_action('show_user_profile', array(&$this, 'showCustomProfileFields'));
-		
-		add_action('updated_user_meta', array(&$this, 'updateUserMeta'), 10, 4);
-		add_action('added_user_meta', array(&$this, 'updateUserMeta'), 10, 4);
 
 		// Page access
 
@@ -290,13 +287,10 @@ class gnlms_LMS extends gn_WebInterface {
 
 	function updateLMSUser ($user_id) { //, $old_data) {
 		$user = get_userdata($user_id);
+		error_log("Updating LMS User?");
 		if($this->user_in_role("lms_user", $user)) {
 			$this->data->updateLMSUser($user);
 		}
-	}
-	
-	function updateUserMeta ($metaID, $userID, $key, $value) {
-		$this->data->setLMSUserField($userID, $key, $value);
 	}
 
 	function user_in_role ($role, $user=null) {
@@ -1417,7 +1411,7 @@ function before_signup_form( $wp_error ) {
 	    unset($contactmethods['yim']);
 	    unset($contactmethods['website']);
 
-	    $this->var_error_log($contactmethods);
+	    //$this->var_error_log($contactmethods);
 
 	    return $contactmethods;
 }

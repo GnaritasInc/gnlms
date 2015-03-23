@@ -9,6 +9,8 @@ function gnlms_css_hacks($) {
 			$("#setupform input[name='user_name']").val($(this).val());
 			});
 
+	$("#theme-my-login.profile table tr#password").remove();
+
 }
 
 
@@ -68,11 +70,11 @@ jQuery(document).ready(function ($) {
 			"Checkout": function () { location.href="/checkout/"; }
 		}
 	});
-	
+
 	function setCheckoutButtonState () {
 		$("button:contains('Checkout')", $("#gnlms-sc-dialog").parents(".ui-dialog")).button("option", "disabled", $("#gnlms-sc-dialog .gnlms-shopping-cart").length ? false : true);
 	}
-	
+
 	setCheckoutButtonState();
 
 	$("#gnlms-sc-dialog").on("submit",  "form.shopping_cart_update", function (e) {

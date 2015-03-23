@@ -1,7 +1,3 @@
-<?php if($context["_is_profile"]): ?>
-<h2>My Profile</h2>
-<p>To change your password, complete the "Password" and "Confirm password" fields and click "Update Profile". Your password will then be updated.</p>
-<?php endif; ?>
 
 <div id="gnLMSUser">
 <?php
@@ -9,6 +5,7 @@
 
 	if ($context["_is_registration"]) {
 ?>
+<hr width="50%" align="center"/>
 <p><label id="registration_code"><span>*Registration Code: </span><input type="text" name="registration_code" value="<?php echo(htmlspecialchars($context['registration_code'])); ?>" /></label></p>
 
 <?php
@@ -21,8 +18,8 @@
 <?php if (!$context["_is_registration"]) { ?>
 <p><label><span>*Email:</span> <input autocomplete="off" type="text" name="email" value="<?php echo(htmlspecialchars($context['email'])); ?>" /></label></p>
 
-<p><label><span>Password:</span><input autocomplete="off" name="password" type="password" value=""/></label></p>
-<p><label><span>Confirm Password:</span> <input autocomplete="off" name="password" type="password" value=""/></label></p>
+<p><label><span>New Password (leave blank to keep unchanged):</span><input autocomplete="off" name="pass1" type="password" value=""/></label></p>
+<p><label><span>Confirm New Password:</span> <input autocomplete="off" name="pass2" type="password" value=""/></label></p>
 
 
 <?php /* ?>
@@ -39,7 +36,7 @@
 
 <?php } ?>
 
-<p><label><span>Organization:</span> <input type="text" name="title" value="<?php echo(htmlspecialchars($context['extorganization'])); ?>"/></label></p>
+<p><label><span>Organization:</span> <input type="text" name="assigned_org" value="<?php echo(htmlspecialchars($context['assigned_org'])); ?>"/></label></p>
 <p><label><span>Title:</span> <input type="text" name="title" value="<?php echo(htmlspecialchars($context['title'])); ?>"/></label></p>
 <!-- <p><label><span>Role:</span> <input type="text" name="role" value="<?php echo(htmlspecialchars($context['role'])); ?>"/></label></p> -->
 <p><label><span>Phone:</span> <input type="text" name="phone" value="<?php echo(htmlspecialchars($context['phone'])); ?>"/></label></p>
