@@ -6,7 +6,7 @@
 	if ($context["_is_registration"]) {
 ?>
 <hr width="50%" align="center"/>
-<p><label id="registration_code"><span>*Registration Code: </span><input type="text" name="registration_code" value="<?php echo(htmlspecialchars($context['registration_code'])); ?>" /></label></p>
+<p><label id="registration_code"><span>*Registration Code:</span> <input type="text" name="registration_code" value="<?php echo(htmlspecialchars($context['registration_code'])); ?>" /></label></p>
 
 <?php
 }
@@ -52,7 +52,7 @@
 <?php endforeach; ?>
 </select>
 </label></p>
-<p><label><span>Zip:</span><input type="text" name="zip" value="<?php echo(htmlspecialchars($context['zip'])); ?>"/></label></p>
+<p><label><span>Zip:</span> <input type="text" name="zip" value="<?php echo(htmlspecialchars($context['zip'])); ?>"/></label></p>
 <p><label><span>Country:</span> <input type="text" name="country" value="<?php echo(htmlspecialchars($context['country'])); ?>"/></label></p>
 
 </div>
