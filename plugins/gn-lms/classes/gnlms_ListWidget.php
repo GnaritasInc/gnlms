@@ -75,7 +75,7 @@ function super ($methodName) {
 
 	function doAdminCourseList ($atts, $content, $code) {
 		$atts["key"] = "admin_course_list";
-		$atts["filters"] = "record_status";		
+		$atts["filters"] = "record-status";		
 		return $this->gn_full_list($atts, $content, $code);
 	}
 
@@ -238,7 +238,7 @@ function super ($methodName) {
 			case 'code':
 				$str = "<label>Registration code: <input type='text' name='code' /></label>";
 				break;
-			case 'record_status':
+			case 'record-status':
 				$str = "<input type='hidden' id='record_status_null' name='record_status' value='no'/>";
 				$str .= "<label><input type='checkbox' name='record_status' value='yes'/> Show Inactive</label>";				
 				break;
