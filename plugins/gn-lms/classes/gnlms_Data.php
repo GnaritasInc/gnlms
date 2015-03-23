@@ -187,8 +187,9 @@ class gnlms_Data extends gn_PluginDB {
 			),
 
 			"admin_course_list"=>array(
-				"list_select_table"=>"#course# c",
-				"listcolumns"=>array("c.id", "c.title", "c.description", "c.record_status as 'active'")
+				"table"=>"course",
+				// "list_select_table"=>"#course# c",
+				"listcolumns"=>array("id", "title", "description", "record_status as 'active'")
 			),
 
 			"user_current_courses"=>array(
@@ -250,6 +251,10 @@ class gnlms_Data extends gn_PluginDB {
 	}
 
 	function tableName ($internalName) {
+		$key = $internalName;
+		if (array_key_exists($key, $this->tableDefinition) && array_key_exists("table", $this->tableDefinition[$key])) {
+			$internalName = $this->tableDefinition[$key]['table'];
+		}
 		return $this->prefixTableName($internalName);
 	}
 

@@ -75,7 +75,8 @@ function super ($methodName) {
 
 	function doAdminCourseList ($atts, $content, $code) {
 		$atts["key"] = "admin_course_list";
-		return $this->gn_short_list($atts, $content, $code);
+		$atts["filters"] = "record_status";		
+		return $this->gn_full_list($atts, $content, $code);
 	}
 
 	function doUserCurrentCourseList ($atts, $content, $code) {
@@ -237,6 +238,10 @@ function super ($methodName) {
 			case 'code':
 				$str = "<label>Registration code: <input type='text' name='code' /></label>";
 				break;
+			case 'record_status':
+				$str = "<input type='hidden' id='record_status_null' name='record_status' value='no'/>";
+				$str .= "<label><input type='checkbox' name='record_status' value='yes'/> Show Inactive</label>";				
+				break;
 			default:
 				$str="";
 				break;
@@ -275,6 +280,9 @@ function super ($methodName) {
 				$str = "date-range";
 				break;
 
+			case "record_status":
+				$str = "record_status";
+				break;
 			default:
 				$str = "";
 				break;
