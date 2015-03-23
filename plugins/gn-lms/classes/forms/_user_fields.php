@@ -18,8 +18,11 @@
 <?php if (!$context["_is_registration"]) { ?>
 <p><label><span>*Email:</span> <input autocomplete="off" type="text" name="email" value="<?php echo(htmlspecialchars($context['email'])); ?>" /></label></p>
 
-<p><label><span>New Password (leave blank to keep unchanged):</span><input autocomplete="off" name="pass1" type="password" value=""/></label></p>
+<hr width="50%" align="center"/>
+<h2 class="center" style="text-align:center">Change Password (Leave blank to keep unchanged)</h2>
+<p><label><span>New Password:</span> <input autocomplete="off" name="pass1" type="password" value=""/></label></p>
 <p><label><span>Confirm New Password:</span> <input autocomplete="off" name="pass2" type="password" value=""/></label></p>
+<hr width="50%" align="center"/>
 
 
 <?php /* ?>
