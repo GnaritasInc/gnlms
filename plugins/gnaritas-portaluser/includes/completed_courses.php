@@ -18,7 +18,7 @@ else {
 <?php
 
 foreach ($records as $key => $obj) {
-echo ("<li>". $obj->title);
+echo ("<li>". $obj->title . " <a class='gnlms-certificate' target='_blank' href='/certificate/?course_id=".$obj->course_id."'>View Certificate</a>");
 echo ("<ul>");
 echo ("<li>Registration date: $obj->registration_date</li>");
 echo ("<li>Completion date: $obj->course_completion_date</li>");
