@@ -211,7 +211,8 @@ class gnlms_Data extends gn_PluginDB {
 
 
 				"list_select_table"=>"#course# c left join #user_course_registration# ucr on c.id=ucr.course_id and ucr.user_id=%d",
-				"listcolumns"=>array("c.*, case when ucr.record_status=0 then 'Inactive' else ucr.course_status end as 'course_status', ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score")
+				"listcolumns"=>array("c.*, case when ucr.record_status=0 then 'Inactive' else ucr.course_status end as 'course_status', ucr.registration_date, ucr.course_completion_date, ucr.expiration_date, ucr.score"),
+				"filter"=>"c.record_status=1"
 			),
 
 			"course_users"=>array(
