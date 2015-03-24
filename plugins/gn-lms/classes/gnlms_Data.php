@@ -200,7 +200,8 @@ class gnlms_Data extends gn_PluginDB {
 				"listcolumns"=>array("c.id", "c.title", "c.description", "c.course_number", "ucr.course_status", "c.url", "if(ucr.expiration_date < current_date(), 1, 0) as 'expired'"),
 				"context_filters"=>array(
 					"context_user_id"=>"ucr.user_id=#current_user_id#"
-				)
+				),
+				"filter"=>"c.record_status=1"
 			),
 
 			"user_available_courses"=>array(
