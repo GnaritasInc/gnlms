@@ -65,7 +65,8 @@ class gnlms_Data extends gn_PluginDB {
 					"title",
 					"role",
 					"phone",
-					"assigned_org"
+					"assigned_org",
+					"import_subscription_code"
 				),
 				"validationFunction"=>"validateUser"
 			),

@@ -53,6 +53,8 @@ $this->tableDefinitions = array (
 		 title varchar(60) DEFAULT NULL,
 		 role varchar(45) DEFAULT NULL,
 		 phone varchar(60) DEFAULT NULL,
+		 assigned_org varchar(255),
+		 import_subscription_code int(11),
 		 PRIMARY KEY  (id),
 		 KEY #user_organization# (organization_id),
 		 KEY #user_subscription_code# (subscription_code_id),
