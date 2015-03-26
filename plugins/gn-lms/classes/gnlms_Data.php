@@ -36,7 +36,7 @@ class gnlms_Data extends gn_PluginDB {
 					"url",
 					"certificate",
 					"credit",
-					"record_status"				
+					"record_status"
 				),
 				"listcolumns"=>array("id", "title", "case record_status when 1 then 'Yes' else 'No' end as 'active'"),
 				"defaults"=>array(
@@ -253,12 +253,36 @@ class gnlms_Data extends gn_PluginDB {
 
 	}
 
+	/*  CTW: 3/26
+
+	****
+
+	Multisite wasn't exactly working right; and this is breaking
+	E.g., Filtering  vs. inherited method
+
+	Modifying to return empty string if there isn't an explicit table named in the definition
+	(Which is the behavior of the old default)
+
+	*/
+
+
+
+
 	function tableName ($internalName) {
 		$key = $internalName;
+		/*
 		if (array_key_exists($key, $this->tableDefinition) && array_key_exists("table", $this->tableDefinition[$key])) {
 			$internalName = $this->tableDefinition[$key]['table'];
 		}
-		return $this->prefixTableName($internalName);
+		*/
+		$internalName = $this->tableDefinition[$key]['table'];
+
+		$result = $internalName?$this->prefixTableName($internalName):"";
+		error_log("Tablename $internalName  -> $result");
+
+		return ($result);
+
+		//return $internalName?$this->prefixTableName($internalName):"";
 	}
 
 	function listSelectTableName($name) {
