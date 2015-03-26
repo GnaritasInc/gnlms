@@ -300,7 +300,7 @@ function launchCourse (url) {
 	
 	window.gnSession= new Object(); // hack
 
-	GLOBAL_COURSE_WINDOW = window.open(url,"Course","fullscreen=no,status=no,toolbar=no,menubar=no,location=no");
+	GLOBAL_COURSE_WINDOW = window.open(url,"Course","fullscreen=no,status=no,toolbar=no,menubar=no,location=no, scrollbars=yes");
 
 	if (GLOBAL_COURSE_WINDOW) {
 		jQuery(".gnScormFailedLaunch").hide();
