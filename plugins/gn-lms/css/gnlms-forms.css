@@ -112,3 +112,11 @@ input.gnlms-button.ui-button {
 	text-align: left;
 	margin: 1em 0;
 }
+
+/* CTW 3-31-2015 */
+
+div.gnlms-form-dialog {display:none}
+.ui-dialog-titlebar {background-color:#3A66AE !important; border: 0px !important; border-radius:0px !important;}
+.ui-dialog-title {color:white !important;}
+
+.ui-dialog {border-color: #1A468E !important;}
