@@ -16,6 +16,8 @@ require_once("classes/gnlms_ListWidget.php");
 require_once("classes/gnlms_Report.php");
 require_once("classes/gnlms_ReportData.php");
 
+require_once("stripe/init.php");
+
 function gnlms_update_status () {
 	$data = new gnlms_Data();
 	$data->updateCourseRegistrationStatus();

@@ -7,3 +7,6 @@
 [submodule "plugins/gn-taskmanager"]
 	path = plugins/gn-taskmanager
 	url = https://github.com/GnaritasInc/gn-taskmanager.git
+[submodule "plugins/gn-lms/stripe"]
+	path = plugins/gn-lms/stripe
+	url = https://github.com/stripe/stripe-php.git
