@@ -24,6 +24,10 @@ form.gnlms_data_form p {
 	display: inline;
 }
 
+table.gnlms-shopping-cart {
+	width: 60%;
+}
+
 form.gnlms_report_filter fieldset {
     border: 2px groove threedface;
     display: block;
