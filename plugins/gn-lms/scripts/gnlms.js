@@ -195,10 +195,14 @@ jQuery(document).ready(function ($) {
 
 					function (responseText, textStatus, XMLHttpRequest) {
 
-						jQuery("#gnlms-course-monitor").dialog(
-						{
-						"modal":true,
-						"beforeClose": function( event, ui ) {return (gnLMSCourseMonitorClose());}
+						jQuery("#gnlms-course-monitor").dialog({
+							"modal":true,
+							"beforeClose": function( event, ui ) {
+								return (gnLMSCourseMonitorClose());
+							},
+							"close":function () {
+								location.reload(true);
+							}
 						});
 						launchCourse(courseURL);
 					}
