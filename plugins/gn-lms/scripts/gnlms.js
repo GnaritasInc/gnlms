@@ -16,6 +16,11 @@ function gnlms_css_hacks($) {
 
 jQuery(document).ready(function ($) {
 	gnlms_css_hacks($);
+	
+	$("a.gnlms-certificate").click(function () {
+		window.open(this.href, '', 'resizable=yes,scrollbars=yes,width=800,height=600');
+		return false;
+	});
 
 	$("div.gnlms-form-dialog").each(function () {
 		var width = $(this).attr("data-width") ? parseInt($(this).attr("data-width")) : 500;
