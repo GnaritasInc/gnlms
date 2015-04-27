@@ -88,7 +88,7 @@ $this->tableDefinitions = array (
 		  PRIMARY KEY (id),
 		  UNIQUE KEY transaction_id_UNIQUE (transaction_id),
 		  KEY #ec_user_idx# (user_id),
-		  CONSTRAINT #ec_user# FOREIGN KEY (user_id) REFERENCES #user# (id) ON UPDATE CASCADE ON DELETE NO ACTION
+		  CONSTRAINT #ec_user# FOREIGN KEY (user_id) REFERENCES #user# (id) ON UPDATE CASCADE ON DELETE CASCADE
 		) ENGINE=InnoDB",
 	
 	"ecommerce_item"=>"(
@@ -99,8 +99,8 @@ $this->tableDefinitions = array (
 		  PRIMARY KEY (id),
 		  KEY #ec_item_ecommerce_idx# (ecommerce_id),
 		  KEY #ec_item_course_idx# (course_id),
-		  CONSTRAINT #ec_item_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON UPDATE CASCADE,
-		  CONSTRAINT #ec_item_ecommerce# FOREIGN KEY (ecommerce_id) REFERENCES #ecommerce# (id) ON UPDATE CASCADE
+		  CONSTRAINT #ec_item_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON UPDATE CASCADE ON DELETE CASCADE,
+		  CONSTRAINT #ec_item_ecommerce# FOREIGN KEY (ecommerce_id) REFERENCES #ecommerce# (id) ON UPDATE CASCADE ON DELETE CASCADE
 		) ENGINE=InnoDB",
 
 	"user_course_registration"=> "(
@@ -123,7 +123,7 @@ $this->tableDefinitions = array (
 		 KEY #ucr_ec_item_idx# (ec_item_id),
 		 CONSTRAINT #user_course_registration_ibfk_1# FOREIGN KEY (user_id) REFERENCES $wp_users (ID) ON DELETE CASCADE ON UPDATE CASCADE,
 		 CONSTRAINT #user_course_registration_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE CASCADE ON UPDATE CASCADE,
-		 CONSTRAINT #ucr_ec_item# FOREIGN KEY (ec_item_id) REFERENCES #ecommerce_item# (id) ON DELETE RESTRICT ON UPDATE CASCADE
+		 CONSTRAINT #ucr_ec_item# FOREIGN KEY (ec_item_id) REFERENCES #ecommerce_item# (id) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB",
 
 	"user_course_assessment_response"=> "(
