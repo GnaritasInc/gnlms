@@ -511,18 +511,18 @@ class gnlms_LMS extends gn_WebInterface {
 			return ($this->user_in_role("administrator") || $this->user_in_role($role));
 		}
 
-		function check_auth_blog_member()
-		{
+		function check_auth_blog_member() {
 			if (  (!is_front_page()
 				  &&(strpos($_SERVER['REQUEST_URI'], '/user-account/')!==0)
 				  &&(strpos($_SERVER['REQUEST_URI'], '/register/')!==0)
 				  &&(strpos($_SERVER['REQUEST_URI'], '/login/')!==0)
 				  && (strpos($_SERVER['REQUEST_URI'], '/lostpassword/')!==0)
 				  && (strpos($_SERVER['REQUEST_URI'], '/resetpass/')!==0)
+				  && (strpos($_SERVER['REQUEST_URI'], '/contact/')!==0)
 				  && $_SERVER['PHP_SELF'] != '/wp-login.php')
 				  && ( !is_user_logged_in() || !is_user_member_of_blog() ) ) {
 
-			auth_redirect();
+				auth_redirect();
 			}
 
 		}
