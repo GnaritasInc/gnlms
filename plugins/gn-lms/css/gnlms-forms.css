@@ -124,3 +124,17 @@ div.gnlms-form-dialog {display:none}
 .ui-dialog-title {color:white !important;}
 
 .ui-dialog {border-color: #1A468E !important;}
+
+/* DS: toggle text */
+
+.gn-toggle {
+	cursor: pointer;
+	padding-left: 16px;
+	background-image: url('images/table-toggle.png');
+	background-repeat: no-repeat;
+	max-width: 900px;
+}
+
+.gn-toggle.expanded {
+	background-position: -984px 0;
+}

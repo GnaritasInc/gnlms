@@ -274,9 +274,24 @@ jQuery(document).ready(function ($) {
 
 		$(this).dialog("option", "buttons", buttons);
 	});
+	
+	initToggleText();
 
 });
 
+function initToggleText () {
+	var $ = jQuery;
+	
+	$(".gn-toggle-text").hide();
+	$(".gn-toggle")
+	.attr("title", "Click to expand")
+	.click(function () {
+		$(this).next(".gn-toggle-text").toggle();
+		var expanded = $(this).next(".gn-toggle-text").is(":visible") ? true : false;
+		$(this).attr("title", "Click to "+(expanded ? "hide" : "expand"));
+		$(this).toggleClass("expanded", expanded);
+	});
+}
 
 function getParams () {
 	var params = {};
