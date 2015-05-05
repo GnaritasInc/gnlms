@@ -1193,6 +1193,8 @@ function ms_registrationAddFields ($errors) {
 		error_log("Showing Registration");
 		$context = $_POST;
 		$context["_is_registration"] = true;
+		
+		$context["registration_code"] = trim($_GET['reg_code']);
 
 		ob_start();
 		$this->displayTemplate("forms/_user_fields.php", $context);
