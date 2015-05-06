@@ -497,10 +497,10 @@ class FSCF_Process {
         if (self::$form_options['print_form_enable'] == 'true') {
           self::$email_msg_print = self::$email_msg;
           //self::$email_msg_print .= self::make_bold( 'Time:' ) . $inline_or_newline;
-		  //self::$email_msg_print .= date_i18n(get_option('date_format').' '.get_option('time_format'), time() );
+		  //self::$email_msg_print .= date_i18n(get_option('date_format').' '.get_option('time_format'), current_time('timestamp') );
         }
 
-		self::$email_fields['date_time'] = date_i18n(get_option('date_format').' '.get_option('time_format'), time() );
+		self::$email_fields['date_time'] = date_i18n(get_option('date_format').' '.get_option('time_format'), current_time('timestamp') );
 
         self::$email_fields['ip_address'] = (isset( $_SERVER['REMOTE_ADDR'] )) ? $_SERVER['REMOTE_ADDR'] : 'n/a';
 
@@ -941,7 +941,7 @@ class FSCF_Process {
 			$user_info['wp_user_location'] = __( 'Location', 'si-contact-form' ) . ': ' . $geo_loc;
 			self::$form_data['sender_location'] = __( 'Location', 'si-contact-form' ) . ': ' . $geo_loc;
 		}
-	    $user_info['wp_user_date'] = __( 'Date/Time', 'si-contact-form' ) . ': ' . date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), time() );
+	    $user_info['wp_user_date'] = __( 'Date/Time', 'si-contact-form' ) . ': ' . date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), current_time('timestamp') );
 		$user_info['wp_user_referer'] = __( 'Coming from (referer)', 'si-contact-form' ) . ': ' . esc_url( self::$form_action_url );
 		$user_info['wp_user_agent'] = __( 'Using (user agent)', 'si-contact-form' ) . ': ' . FSCF_Util::clean_input( $_SERVER['HTTP_USER_AGENT'] ) . self::$php_eol;
 
@@ -1685,13 +1685,13 @@ class FSCF_Process {
                // use wp_redirect when timeout seconds is 0.
                // So now if you set the timeout to 0 seconds, then post the form, it gets instantly redirected to the redirect URL
                // and you are responsible to display the "your message has been sent, thank you" message there.
-               wp_redirect( $ctf_redirect_url );
+               wp_redirect( esc_url_raw($ctf_redirect_url) );
 		       exit;
            }
 
 			// meta refresh page timer feature
             // allows some seconds to to display the "your message has been sent, thank you" message.
-			self::$meta_string = "<meta http-equiv=\"refresh\" content=\"$ctf_redirect_timeout;URL=$ctf_redirect_url\">\n";
+			self::$meta_string = "<meta http-equiv=\"refresh\" content=\"$ctf_redirect_timeout;URL=".esc_url($ctf_redirect_url)."\">\n";
 			if (is_admin())
 				add_action('admin_head', 'FSCF_Process::meta_refresh',1);
 			else

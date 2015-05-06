@@ -3779,14 +3779,14 @@ if (!function_exists('sicf_ctct_admin_form')) { // skip if the plugin is already
 		// Update the query args if necessary
 		if ( ! isset($_POST['ctf_action'])&& isset( $_REQUEST['_wp_http_referer'] ) ) {
 			// Set the current tab in _wp_http_referer so that we go there after the save
-			$wp_referer = remove_query_arg( 'fscf_tab', $_REQUEST['_wp_http_referer'] );
-			$wp_referer = add_query_arg( 'fscf_tab', $_POST['current_tab'], $wp_referer );
+			$wp_referer = esc_url_raw(remove_query_arg( 'fscf_tab', $_REQUEST['_wp_http_referer'] ));
+			$wp_referer = esc_url_raw(add_query_arg( 'fscf_tab', $_POST['current_tab'], $wp_referer ));
 			if ( isset( $text['akismet_check'] ) ) {
 				// Request Akismet check on page reload
-				$wp_referer = add_query_arg( 'akismet_check', 'true', $wp_referer );
+				$wp_referer = esc_url_raw(add_query_arg( 'akismet_check', 'true', $wp_referer ));
 				unset ( $text['akismet_check'] );	// Don't save this in database
 			} else {
-				$wp_referer = remove_query_arg( 'akismet_check', $wp_referer );
+				$wp_referer = esc_url_raw(remove_query_arg( 'akismet_check', $wp_referer ));
 			}
 			$_REQUEST['_wp_http_referer'] = $wp_referer;
 		}

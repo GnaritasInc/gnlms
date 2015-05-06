@@ -4,7 +4,7 @@ Author URI: http://www.642weather.com/weather/scripts.php
 Donate link: https://www.FastSecureContactForm.com/donate
 Tags: Akismet, captcha, contact, contact form, form, mail, email, spam, multilingual, wpmu
 Requires at least: 3.4.2
-Tested up to: 4.1.1
+Tested up to: 4.2.1
 Stable tag: trunk
 
 An easy and powerful form builder that lets your visitors send you email. Blocks all automated spammers. No templates to mess with.
@@ -269,6 +269,11 @@ You can enable or disable this option in the "Scheduling" tab of your contact fo
 If you have additional questions visit [vCita Support Page](http://support.vcita.com)
 
 == Changelog ==
+
+= 4.0.36 =
+- (02 May 2015) - Fixed possible xss vulnerability with add_query_arg(), remove_query_arg() and esc_url() usage.
+- Improved timezone compliance with WP standards.
+
 
 = 4.0.34 =
 - (03 Apr 2015) - added a new filter hook to allow modifying the $user_info array. The user info is displayed at the end of the email
