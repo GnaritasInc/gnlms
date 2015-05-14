@@ -83,8 +83,8 @@ class gnlms_ReportData extends gn_PluginDB {
 				)
 			),
 			"ecommerce"=>array(
-				"columns"=>"u.email as 'Email', u.last_name as 'Last Name', u.first_name as 'First Name', o.name as 'Organization', ec.transaction_id as 'Transaction ID', concat('$', format(ec.transaction_amount, 2)) as 'Amount', ec.transaction_date as 'Date'",
-				"tableExpr"=>"#ecommerce# ec left join #user# u on ec.user_id=u.id left join #organization# o on o.id=u.organization_id",
+				"columns"=>"u.email as 'Email', u.last_name as 'Last Name', u.first_name as 'First Name', o.name as 'Organization', ec.transaction_id as 'Transaction ID', concat('$', format(ec.transaction_amount, 2)) as 'Amount', ec.transaction_date as 'Date', group_concat(c.title separator '; ') as 'Courses'",
+				"tableExpr"=>"#ecommerce# ec left join #user# u on ec.user_id=u.id left join #organization# o on o.id=u.organization_id left join #ecommerce_item# ei on ei.ecommerce_id=ec.id left join #course# c on c.id=ei.course_id",
 				"filters"=>array(
 					"_between"=>array("date(ec.transaction_date)", "start_date", "end_date"),
 					"_contains"=>array("u.email", "email"),
@@ -94,7 +94,8 @@ class gnlms_ReportData extends gn_PluginDB {
 					"date"=>array("ec.transaction_date desc", "Date (desc)"),
 					"last_name"=>array("u.last_name", "Last Name"),
 					"org"=>array("o.name", "Organization")				
-				)
+				),
+				"groupBy"=>"ec.id"
 			)			
 		);
 	}
