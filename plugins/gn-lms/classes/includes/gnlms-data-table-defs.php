@@ -3,13 +3,15 @@ $wp_users = $this->db->users;
 
 $this->tableDefinitions = array (
 	"course"=> "(
-		id int(11) NOT NULL AUTO_INCREMENT,
-		 course_number varchar(45) DEFAULT NULL,
-		 last_update date DEFAULT NULL,
-		 title varchar(255) NOT NULL,
-		 description text,
-		 url varchar(255) DEFAULT NULL,
-		 record_status tinyint(4) NOT NULL DEFAULT '1',
+		  id int(11) NOT NULL AUTO_INCREMENT,
+		  course_number varchar(45) DEFAULT NULL,
+		  last_update date DEFAULT NULL,
+		  title varchar(255) NOT NULL,
+		  description text,
+		  url varchar(255) DEFAULT NULL,
+		  certificate varchar(255) DEFAULT NULL,
+		  credit decimal(3,2) DEFAULT NULL,
+		  record_status tinyint(4) NOT NULL DEFAULT '1',
 		 PRIMARY KEY  (id)
 		) ENGINE=InnoDB",
 
