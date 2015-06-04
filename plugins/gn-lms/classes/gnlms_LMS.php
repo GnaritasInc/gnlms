@@ -522,7 +522,7 @@ class gnlms_LMS extends gn_WebInterface {
 				  && (strpos($_SERVER['REQUEST_URI'], '/lostpassword/')!==0)
 				  && (strpos($_SERVER['REQUEST_URI'], '/resetpass/')!==0)
 				  && $_SERVER['PHP_SELF'] != '/wp-login.php')
-				  && !get_post_meta( $post->ID, "_gnlms_allow_anonymous", true )
+				  && !get_post_meta( $post->ID, "gnlms_allow_anonymous", true )
 
 				  ) {
 
