@@ -1,0 +1,144 @@
+label {
+	color: #5272b0;
+}
+
+form.gnlms_data_form label, 
+form.gnlms_data_form input[type='text'], 
+form.gnlms_data_form input[type='password'], 
+form.gnlms_data_form input[type='date'],
+form.gnlms_data_form input[type='number'],
+form.gnlms_data_form textarea {
+	display: block;
+}
+
+form.gnlms_data_form .gnlms_range  input, form.gnlms_data_form .gnlms_range  label {
+	display: inline;
+}
+
+form.gnlms_data_form p {
+	margin: 1em 0;
+	font-size: 12px;
+}
+
+.gnlms-shopping-cart form.shopping_cart_update, .gnlms-course-status form.shopping_cart_update {
+	display: inline;
+}
+
+table.gnlms-shopping-cart {
+	width: 60%;
+}
+
+form.gnlms_report_filter fieldset, #gnlms_course_upload fieldset {
+    border: 2px groove threedface;
+    display: block;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+#gnlms_course_upload fieldset {
+	margin: 1em;
+}
+
+.gnlms_report_data {
+	padding: 1em;
+}
+
+.gnlms_report_data .answer.numeric {
+	text-align: center;
+	font-weight: bold;
+}
+
+.gnlms_report_data .answer.incorrect {
+	color: red;
+}
+
+.gnlms_report_data .answer.correct {
+	color: green;
+}
+
+form.gnlms_data_form label, .gnlms_range {
+	margin-bottom: 1em;
+}
+
+
+form.gnlms_data_form textarea {
+	width: 90%;
+	height: 200px;
+}
+
+
+form.gn-list-form label, form.gn-list-form input[type='text'] {
+	display: block;
+}
+
+div.gnlms-error {
+	border: 2px solid red;
+	background-color: #fcc;
+}
+
+/* CTW addition */
+div.filters form.gn-list-form label, form.gn-list-form input[type='text'], div.filters div {
+	display: inline-block;
+	margin:3px;
+}
+
+div.filters {
+	background-color: #EEEE99;
+	}
+
+div.gnlist-filter-update {float:right}
+/* End CTW */
+
+form.gn-list-form label {
+	margin-bottom: 0.5em;
+}
+
+div.full_span {
+	clear: both;
+}
+
+div#gnlms-course-monitor p {margin-top:9px}
+div#gnlms-course-monitor a {text-decoration:underline; text-align: center; color: blue; font-weight:bold; display:block;}
+
+
+/*
+input {
+	border: 2px inset #ccc;
+}
+*/
+
+div.entry a.gnlms-button:link, div.entry a.gnlms-button:visited {
+	color: rgb(69,69,69);
+}
+
+input.gnlms-button.ui-button {
+	padding: 4px;
+}
+
+#theme-my-login.mu_register p {
+	text-align: left;
+	margin: 1em 0;
+}
+
+/* CTW 3-31-2015 */
+
+div.gnlms-form-dialog {display:none}
+.ui-dialog-titlebar {background-color:#3A66AE !important; border: 0px !important; border-radius:0px !important;}
+.ui-dialog-title {color:white !important;}
+
+.ui-dialog {border-color: #1A468E !important;}
+
+/* DS: toggle text */
+
+.gn-toggle {
+	cursor: pointer;
+	padding-left: 16px;
+	background-image: url('images/table-toggle.png');
+	background-repeat: no-repeat;
+	max-width: 900px;
+}
+
+.gn-toggle.expanded {
+	background-position: -984px 0;
+}
