@@ -189,6 +189,17 @@ class gnlms_Data extends gn_PluginDB {
 		return apply_filters("gnlms_list_sql", $sql, $name, $atts);
 	}
 
+	function tableName ($internalName) {
+		$key = $internalName;
+		$internalName = $this->tableDefinition[$key]['table'];
+
+		$result = $internalName?$this->prefixTableName($internalName):"";
+
+		return ($result);
+
+	}
+
+
 	function listSelectTableName($name) {
 		$tableExpr = parent::listSelectTableName($name);
 		if ($name == "user_available_courses") {
