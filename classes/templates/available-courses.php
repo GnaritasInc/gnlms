@@ -11,7 +11,7 @@ global $gnlms;
 		<?php if(strlen(trim($course->image))): ?><img class="gnlms-course-image" src="<?php echo $gnlms->getOption("gnlms_course_image_url")."/".$course->image;?>" alt="<?php echo htmlspecialchars($course->title); ?>" /><?php endif; ?>
 		<?php echo $course->description; ?>
 		</div>
-		<?php if(is_user_logged_in() && $courseLink = $gnlms->getCoursePageLink($course->id)): ?>
+		<?php if($courseLink = $gnlms->getCoursePageLink($course->id)): ?>
 		<div class="gnlms-course-action">
 		<p><a href="<?php echo $courseLink; ?>">View course details...</a></p>	
 		</div>

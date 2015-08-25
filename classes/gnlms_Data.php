@@ -121,7 +121,7 @@ class gnlms_Data extends gn_PluginDB {
 			
 			"available_courses"=>array(
 				"list_select_table"=>"#course# c",
-				"listcolumns"=>array("c.title", "c.description", "c.image", "c.credit"),
+				"listcolumns"=>array("c.id", "c.title", "c.description", "c.image", "c.credit"),
 				"filter"=>"record_status=1"
 			),
 			

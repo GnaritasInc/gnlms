@@ -1,10 +1,5 @@
 <?php if($atts['code']=="gnlms_course_detail"): 
 	
-	/*
-	$isSelected = in_array($context['id'], $this->getSelectedCourses());
-	$action = $isSelected ? "gnlms_shopping_cart_remove" : "gnlms_shopping_cart_add";
-	$actionText = $isSelected ? "Remove" : "Add to Shopping Cart";
-	*/
 	
 	$id = $context['id'];
 	$userID = get_current_user_id();
@@ -33,7 +28,7 @@
 				break;
 		}
 	}
-	else {
+	else if ($userID) {
 		$statusText = "This course is currently available.";
 		$courseID = $id;
 		ob_start();
@@ -48,7 +43,9 @@
 <div class="gnlms-course-description"><?php echo trim($context['description']); ?></div>
 <div class="gnlms-course-status">
 <?php if($msg): ?><p class="gnlms-msg"><?php echo htmlspecialchars($msg); ?></p><?php endif; ?>
-<?php echo $statusText; ?> <?php if(!$registration) echo $actionButton; ?>
+<?php if($userID): ?>
+	<?php echo $statusText; ?> <?php if(!$registration) echo $actionButton; ?>
+<?php endif; ?>
 </div>
 </div>
 
