@@ -26,16 +26,9 @@ function initialize () {
 
 
 		$this->initDirLocations(__FILE__);
-
-
-		// $this->registerScripts();
-
 		$this->initVars();
-		// $this->setAjaxHooks();
 
 		
-		// DS: Defining shortcodes in subclass
-		// $this->addShortCodes();
 
 
 }
@@ -64,12 +57,8 @@ function initVars () {
 
 function initDirLocations($filename) {
 
-			$baseDir = trailingslashit(dirname(dirname(plugin_basename($filename))));
-			$this->homeDir = WP_PLUGIN_DIR."/$baseDir";
-			$this->htmlDir = $this->homeDir."html/";
-			$this->homeURL = WP_PLUGIN_URL."/$baseDir";
-			$this->jsURL = $this->homeURL."js/";
-			$this->cssURL = $this->homeURL."css/";
+		$this->jsURL = plugins_url("js/", __FILE__);
+			
 
 	}
 

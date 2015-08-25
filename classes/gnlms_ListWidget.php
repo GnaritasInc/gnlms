@@ -35,8 +35,6 @@ function super ($methodName) {
 
 		wp_enqueue_script('gn-forms', plugins_url("scripts/gn.forms.js", dirname(__FILE__)), array("jquery", "jquery-ui-datepicker"));
 
-		// DS: jquery-treeview loaded by gnaritas-portal-user
-		wp_enqueue_script('gnlms-list-widget', plugins_url("scripts/gnlms-list-widget.js", dirname(__FILE__)), array("jquery", "gn-forms", "jquery-treeview"));
 	}
 
 	function registerShortcodes () {
