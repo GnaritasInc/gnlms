@@ -7,7 +7,6 @@ require_once(WP_ROOT.'/wp-config.php');
 
 require_once("classes/gnlms_LMS.php");
 require_once("classes/gnlms_Data.php");
-//require_once("classes/gnlms_ListWidget.php");
 
 ob_end_clean();
 
@@ -20,9 +19,12 @@ function loadData($uid, $cid) {
 	global $gnlms;
 
 
-	$sql ="select scormdata from ".$gnlms->data->tableName('user_course_registration')." where course_id=$cid and user_id=$uid";
+	$sql ="select scormdata from ".$gnlms->data->tableName('user_course_registration')." where course_id=%d and user_id=%d";
+	
+	$sql = $wpdb->prepare($sql, $cid, $uid);
+	
 	$data = $wpdb->get_var($sql);
-	error_log($sql);
+	
 	echo strlen(trim($data)) ?  $data : "{}";
 
 }
@@ -54,8 +56,8 @@ function storeEvaluationResult($uid, $cid, $data) {
 	$dataObj = json_decode(stripslashes($data), true);
 	
 	if (!$dataObj) {
-		error_log("A JSON parse error: ".json_last_error());
-		error_log("JSON string: ".stripslashes($data));	
+		error_log("gnlms: JSON parse error: ".json_last_error());
+		error_log("gnlms: JSON string: ".stripslashes($data));	
 		return;
 	}
 	
@@ -77,8 +79,6 @@ function storeEvaluationResult($uid, $cid, $data) {
 			$sql .= " on duplicate key update id=id";
 			
 			$sql = $gnlms->data->db->prepare($sql, array_values($commentData));
-			
-			error_log("Evaluation data SQL: $sql");
 			
 			$gnlms->data->dbSafeExecute($sql);
 			
@@ -187,9 +187,6 @@ function extractAssessmentData($assessmentData, $interaction) {
 
 	//{"student_response":"3","result":1,"id":"assessment_posttest_1_4"}
 
-	error_log("Extracting single result from ". $interaction->id);
-
-
 	if (interactionType($interaction)=="assessment") {
 
 		$assessmentData = extractInteractionAssessmentData($assessmentData, $interaction);
@@ -204,8 +201,8 @@ function extractAssessmentResults($uid, $cid, $data) {
 	$dataObj = json_decode(stripslashes($data));
 
 	if(!$dataObj) {
-		error_log("A JSON parse error: ".json_last_error());
-		error_log("JSON string: ".stripslashes($data));
+		error_log("gnlms: JSON parse error: ".json_last_error());
+		error_log("gnlms: JSON string: ".stripslashes($data));
 
 	}
 
@@ -216,7 +213,6 @@ function extractAssessmentResults($uid, $cid, $data) {
 
 	if ($dataObj->cmi && $dataObj->cmi->interactions) {
 
-		error_log("Found interactions!");
 
 		$interactions = get_object_vars($dataObj->cmi->interactions);
 
@@ -232,7 +228,6 @@ function extractAssessmentResults($uid, $cid, $data) {
 
 function getScore ($courseData) {
 	$score = ($courseData->cmi && $courseData->cmi->core && $courseData->cmi->core->score) ? $courseData->cmi->core->score->raw : null;
-	//error_log("Score: $score");
 	return $score;
 }
 
@@ -242,11 +237,8 @@ function getCourseStatus ($courseData) {
 }
 
 function isComplete ($courseData) {
-	// $courseStatus = ($courseData->cmi &&  $courseData->cmi->core) ? $courseData->cmi->core->lesson_status : "";
 
 	$courseStatus = getCourseStatus ($courseData);
-
-	//error_log("Course status $courseStatus");
 
 	return $courseStatus == "completed" ? true : false;
 }
@@ -266,13 +258,10 @@ function saveData($uid,$cid, $data) {
 	
 	$gnlms->scormLog("Saving data for user $uid, course $cid: $data");
 
-	$data = $gnlms->data->quoteString($data);
-
-	$sql = "update ".$gnlms->data->tableName('user_course_registration')." set scormdata=$data where user_id=$uid and course_id=$cid";
-
-	error_log($sql);
-
-
+	$sql = "update ".$gnlms->data->tableName('user_course_registration')." set scormdata=%s where user_id=%d and course_id=%d";
+	
+	$sql = $wpdb->prepare($sql, stripslashes($data), $uid, $cid);
+	
 	return ($wpdb->get_var($sql));
 }
 
