@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Gnaritas LMS
-Plugin URI: https://github.com/GnaritasInc/gnlms.git
+Plugin URI: https://github.com/GnaritasInc/gnlms
 Description: Library code to implement Gnaritas LMS functionality
 Version: 0.1
 Author: Gnaritas, Inc.
