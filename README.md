@@ -20,7 +20,7 @@ There's still work to be done, but we decided to make this plug-in available in 
     - **Course Path** : The physical path to the directory where you will upload course files. This directory should be writable.
     - **Course URL** : The request URL pointing to the course path directory above.
     - **Course Image URL** : The request URL for a directory with course images or screenshots for display in course listings.
---  **Course Detail Page** : The URL of a page on your site that will display individual course listings using the [gnlms\_course\_detail] shortcode.
+    - **Course Detail Page** : The URL of a page on your site that will display individual course listings using the [gnlms\_course\_detail] shortcode.
 
 3. Make the classes/log directory under the plugin root writable to allow the plugin to write email notification and SCORM data-saving logs.
 
