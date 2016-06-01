@@ -37,8 +37,7 @@ $this->tableDefinitions = array (
 		 KEY #user_id# (user_id),
 		 KEY #ucr_ec_item_idx# (ec_item_id),
 		 CONSTRAINT #user_course_registration_ibfk_1# FOREIGN KEY (user_id) REFERENCES $wp_users (ID) ON DELETE CASCADE ON UPDATE CASCADE,
-		 CONSTRAINT #user_course_registration_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE CASCADE ON UPDATE CASCADE,
-		 CONSTRAINT #ucr_ec_item# FOREIGN KEY (ec_item_id) REFERENCES #ecommerce_item# (id) ON DELETE CASCADE ON UPDATE CASCADE
+		 CONSTRAINT #user_course_registration_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB",
 
 	"user_course_assessment_response"=> "(
@@ -85,7 +84,7 @@ $this->tableDefinitions = array (
 		 KEY #ucar_user# (user_id),
 		 KEY #ucar_course# (course_id),
 		 CONSTRAINT #ucar_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE CASCADE ON UPDATE CASCADE,
-		 CONSTRAINT #ucar_user# FOREIGN KEY (user_id) REFERENCES #user# (id) ON DELETE CASCADE ON UPDATE CASCADE
+		 CONSTRAINT #ucar_user# FOREIGN KEY (user_id) REFERENCES $wp_users (id) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB",
 
 	"user_course_event"=> "(
@@ -99,7 +98,7 @@ $this->tableDefinitions = array (
 		 KEY #uce_course# (course_id),
 		 KEY #uce_event_type# (event_type),
 		 CONSTRAINT #uce_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE CASCADE ON UPDATE CASCADE,
-		 CONSTRAINT #uce_user# FOREIGN KEY (user_id) REFERENCES #user# (id) ON DELETE CASCADE ON UPDATE CASCADE
+		 CONSTRAINT #uce_user# FOREIGN KEY (user_id) REFERENCES $wp_users (id) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB",
 
 	"course_assessment"=> "(
@@ -165,7 +164,7 @@ $this->tableDefinitions = array (
 		  KEY e_user (user_id),
 		  KEY e_course (course_id),
 		  CONSTRAINT #e_course# FOREIGN KEY (course_id) REFERENCES #course# (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-		  CONSTRAINT #e_user# FOREIGN KEY (user_id) REFERENCES #user# (id) ON DELETE CASCADE ON UPDATE CASCADE
+		  CONSTRAINT #e_user# FOREIGN KEY (user_id) REFERENCES $wp_users (id) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB"
 );
 ?>
