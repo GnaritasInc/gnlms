@@ -3,7 +3,7 @@
 class gnlms_Data extends gn_PluginDB {
 
 	var $currentCourse = null;
-	var $localizeNames = true;
+	var $localizeNames = false;
 
 	var $objectCache = array();
 
