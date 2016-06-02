@@ -4,6 +4,8 @@ class gnlms_ListWidget extends gn_ListWidgetClass {
 
 	function __construct() {
 		parent::__construct();
+		
+		$this->defaultFormValues = array();
 
 		$this->registerShortcodes();
 		add_action('wp_enqueue_scripts', array(&$this, 'registerScripts'));
