@@ -18,6 +18,10 @@ gnSCORMAPI = function  () {
 	this.localData = function () {
 		return (internalStorage);
 	}
+
+	function toSCORMBoolean(b) {
+		return (b?"true":"false");
+	}
 	
 	function setData(data) {
 		if (data) {
@@ -212,14 +216,14 @@ gnSCORMAPI = function  () {
 	//************************************
 	// Initialize
 	this.Initialize = function (s) {
-		return (gnLoadData());
+		return (toSCORMBoolean(gnLoadData()));
 	
 	}
 
 	//************************************
 	// Terminate
 	this.Terminate = function (s) {
-		return (gnDiscardData());
+		return (toSCORMBoolean(gnDiscardData()));
 	
 	}
 	
@@ -235,18 +239,18 @@ gnSCORMAPI = function  () {
 	//SetValue
 	
 	this.SetValue = function (name, value) {
-		return (gnSetValue (name,value));
+		return (toSCORMBoolean(gnSetValue (name,value)));
 	
 	}
 	
 	this.Commit = function (s) {
 	
-		return (gnSaveData());
+		return (toSCORMBoolean(gnSaveData()));
 	
 	
 	}
 	
-	var lastError=0,lastErrorString="",lastDiagnostic=""
+	// CTW 6/2/2016 Already defined above  -- var lastError=0,lastErrorString="",lastDiagnostic=""
 	
 	this.GetLastError = function(){ return (lastError);}
 	this.GetErrorString = function (parameter) { return (lastErrorString)}
