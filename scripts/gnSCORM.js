@@ -276,6 +276,7 @@ API_1484_11 = new gnSCORMAPI();
 API = API_1484_11;
 
 API.LMSInitialize=API.Initialize
+API.LMSFinish=API.Terminate
 API.LMSGetValue=API.GetValue
 API.LMSSetValue=API.SetValue
 API.LMSGetLastError=API.GetLastError
